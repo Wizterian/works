@@ -1,18 +1,18 @@
 # README
 
-## 静的サイト + Vue SPA
-（ページに別途jsとcssが紐づく）静的Webサイトの構造を維持したいという要件を叶えつつ、問題であったCMSテンプレートコストを減らすため一部をVue RouterでSPA化（ヘッドレスCMSにする）  
+## 静的サイト + Vue SPA（製作中）
+（ページに別途jsとcssが紐づく）静的Webサイトの構造を維持したいという要件を叶えつつ、CMSテンプレート制作コストを減らすため一部をVue RouterでSPA（ヘッドレスCMS）にする  
   
 Top（ページにjsとcssが紐づく静的サイト構造）  
   ├ top.js  
   └ top.css  
   
 Stage（ヘッドレスCMS化）  
-  └ stage.vue 
+  └ stage.vue  
     ├ stage.js（単一ファイルでも分離でもOK）  
     └ stage.css（単一ファイルでも分離でもOK）   
   
-NewsIndex（SPA・ヘッドレスCMS化）
+NewsIndex（SPA・ヘッドレスCMS化）  
   └ NewsDetail.js（単一ファイル）  
 
 ## Vue
