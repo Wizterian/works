@@ -1,5 +1,5 @@
 # README
 
-## 環境
-・three.jsを含むlibフォルダ必須
-・Visual Studio CodeのLive Serverでindex.htmlを開く
+## 閲覧時
+・three.jsを含むlibフォルダ必須  
+・Visual Studio CodeのLive Serverプラグインでindex.htmlを開く
