@@ -1,0 +1,27 @@
+extends /event/2022/assets/common/pug/_Layout
+
+block page_stylesheet
+  link(rel="stylesheet", href="/event/2022/assets/index/css/style.css")
+
+block main
+  .container
+    h1 home
+    section.top-section
+      h2 共通コンポーネントを使った複数スライダーテスト
+      p 例.Stageスライダー（<a href="/event/2022/stage/">Stage JSON</a>を共通利用）
+      p ※swiper8（j-query不要、レスポンシブ対応）
+    section.top-section
+      h3 スライダー1（左右少し見せる）
+      #stgSlider
+    section.top-section
+      h3 スライダー2（768px以下スライダ非表示）
+      #otherSlider
+    section.top-section
+      h2 アンカーテスト
+      p 
+        a(href="#post1") リンク
+    section.top-test#post1(style="height: 800px; border: 1px solid red;") contents1
+    section.top-test#post2(style="height: 800px; border: 1px solid blue;") contents2
+
+block page_script_beforeBodyEnd
+  script(src='/event/2022/assets/index/js/bundle.js')

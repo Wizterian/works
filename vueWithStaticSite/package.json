@@ -1,0 +1,71 @@
+{
+  "scripts": {
+    "start": "webpack --watch & npm run build:pugScssJson & npm run watch:pugScssJson & npm run server",
+    "build:pug": "pug src --out htdocs -P --basedir src/",
+    "build:sass": "sass src/:htdocs/ --no-source-map",
+    "copy:static": "cpx 'src/**/*.json' htdocs",
+    "build:pugScssJson": "npm run build:pug & npm run build:sass & npm run copy:static",
+    "watch:pugScssJson": "chokidar \"src/**/*.pug\" \"src/**/*.scss\" \"src/**/*.json\" -c 'npm run build:pug & npm run build:sass & npm run copy:static'",
+    "server": "browser-sync start --config bs-config.js"
+  },
+  "engines": {
+    "node": ">=16.16.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "@vue/compiler-sfc": "^3.2.37",
+    "babel-loader": "^8.2.5",
+    "browser-sync": "^2.27.10",
+    "browsersync-ssi": "^0.2.4",
+    "chokidar-cli": "^3.0.0",
+    "connect-history-api-fallback": "^2.0.0",
+    "cpx": "^1.5.0",
+    "css-loader": "^6.7.1",
+    "glob": "^8.0.3",
+    "pug": "^3.0.2",
+    "pug-cli": "github:pugjs/pug-cli#master",
+    "sass": "^1.53.0",
+    "sass-loader": "^13.0.2",
+    "vue-loader": "^17.0.0",
+    "vue-pug-loader": "^1.1.27",
+    "vue-router": "^4.1.2",
+    "vue-style-loader": "^4.1.3",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "#devDependenciesの解説": {
+    "Static HTML設定": "---------------------------------",
+    "chokidar-cli": "JS、CSS以外のファイルを監視。npm-scriptsで使用",
+    "pug-cli": "pug。chokidarのwatch対象。npm-scriptsで使用。古いcore-jsを使うのでインストール時エラーでる",
+    "sass": "dart-sass。chokidarのwatch対象。npm-scriptsで使用",
+    "Vue設定": "---------------------------------",
+    "glob": "webpackで複数のentry.jsファイル出力に対応",
+    "vue-loader": "vue用。基本loader。vue3でvue、@vue/compiler-sfcとセット",
+    "@vue/compiler-sfc": "vue用。sfcのloader。vue3でvue、vue-loaderとセット",
+    "vue-style-loader": "sfcのstyleを解釈。css-loaderとセット",
+    "css-loader": "vue sfcのstyleを解釈。vue-style-loaderとセット",
+    "sass-loader": "vue sfcのstyle lang=scssを使う場合のみ必要。vue-style-loaderとcss-loaderが必要",
+    "vue-pug-loader": "vue sfcのtemplate=pugを使う場合のみ必要。",
+    "vue-router": "vue SPA機能（router-view）を使う場合必要",
+    "@babel/core": "babel本体。vueでトランスパイル時必要。@babel/preset-env、babel-loaderとセット",
+    "@babel/preset-env": "vueでトランスパイル時必須。@babel/core、babel-loaderとセット",
+    "babel-loader": "vueでトランスパイル時必須。@babel/preset-env、@babel/coreとセット",
+    "Webpack設定": "---------------------------------",
+    "webpack": "webpack。js、css、画像を結束",
+    "webpack-cli": "webpack cli",
+    "Server設定": "---------------------------------",
+    "browser-sync": "サーバー機能。ssiやhistryfallbackが使える。その場合browsersync-ssi、connect-history-api-fallbackとセット",
+    "browsersync-ssi": "ssi読み込み。browser-syncとセット",
+    "connect-history-api-fallback": "history機能。browser-syncとセット",
+    "その他使えるパッケージ": "---------------------------------",
+    "cpx": "PugやSass以外のStaticファイル（JSONなど）をディレクトリ構造維持したまま複製",
+    "適宜入れれば良いもの": "---------------------------------",
+    "swiper": "jQuery不要でレスポンシブ対応のスライダーコンポーネント。Vueと相性良い"
+  },
+  "dependencies": {
+    "@hennge/vue3-pagination": "^1.0.17",
+    "swiper": "^8.3.2",
+    "vue": "^3.2.37"
+  }
+}
