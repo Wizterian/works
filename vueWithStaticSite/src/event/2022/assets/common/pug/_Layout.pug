@@ -71,12 +71,31 @@ html(lang="ja-JP")
   body
     .co-bg
       block header
-        <!--#include virtual="/event/2022/assets/common/inc/navi.html" -->
+        nav
+          a(href="/event/2022/") home
+          a(href="/event/2022/news/") news
+          a(href="/event/2022/stage/") stage
 
       block main
 
       block footer
-        <!--#include virtual="/event/2022/assets/common/inc/footer.html" -->
+        footer
+          ul
+            li
+              a.js-share-twitter(href="", rel="noopener",
+                data-url="twitter.com",
+                data-tracking="share,footer,to_twitter"
+              ) twitter
+            li
+              a.js-share-facebook(href="", rel="noopener",
+                data-url="facebook.com",
+                data-tracking="share,footer,to_facebook"
+              ) facebook
+            li
+              a.js-share-line(href="", rel="noopener",
+                data-url="line.com",
+                data-tracking="share,footer,to_line"
+              ) LINE
     script(src='/event/2022/assets/common/js/bundle.js')
     block page_script_beforeBodyEnd
 
