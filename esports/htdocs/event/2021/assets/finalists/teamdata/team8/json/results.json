@@ -1,0 +1,166 @@
+{
+	"regionals": {
+		"best8": {
+			"stage": [
+				{
+					"name": "Stage name 1",
+					"time": "00:00.000(WIN)",
+					"char": [
+						{
+							"ball": "c01.png",
+							"name": "character name 1"
+						},
+						{
+							"ball": "c04.png",
+							"name": "character name 4"
+						},
+						{
+							"ball": "c08.png",
+							"name": "character name 8"
+						},
+						{
+							"ball": "c02.png",
+							"name": "character name 2"
+						}
+					],
+					"versus": "team 8 <span>VS</span> team 4",
+					"youtubeID": "pUlXQJQ_A38",
+					"youtubeParams": "start=100"
+				}
+			]
+		},
+		"semi": {
+			"stage": [
+				{
+					"name": "Stage name 2",
+					"time": "-(LOSE)",
+					"char": [
+						{
+							"ball": "c03.png",
+							"name": "character name 3"
+						},
+						{
+							"ball": "c07.png",
+							"name": "character name 7"
+						},
+						{
+							"ball": "c05.png",
+							"name": "character name 5"
+						},
+						{
+							"ball": "c06.png",
+							"name": "character name 6"
+						}
+					],
+					"versus": "team 8 <span>VS</span> team 3",
+					"youtubeID": "pUlXQJQ_A38",
+					"youtubeParams": "start=150"
+				},
+				{
+					"name": "Stage name 3",
+					"time": "00:00.000(WIN)",
+					"char": [
+						{
+							"ball": "c08.png",
+							"name": "character name 8"
+						},
+						{
+							"ball": "c04.png",
+							"name": "character name 4"
+						},
+						{
+							"ball": "c01.png",
+							"name": "character name 1"
+						},
+						{
+							"ball": "c05.png",
+							"name": "character name 5"
+						}
+					],
+					"versus": "team 8 <span>VS</span> team 3",
+					"youtubeID": "pUlXQJQ_A38",
+					"youtubeParams": "start=200"
+				},
+				{
+					"name": "Stage name 1",
+					"time": "00:00.000(WIN)",
+					"char": [
+						{
+							"ball": "c06.png",
+							"name": "character name 6"
+						},
+						{
+							"ball": "c03.png",
+							"name": "character name 3"
+						},
+						{
+							"ball": "c02.png",
+							"name": "character name 2"
+						},
+						{
+							"ball": "c08.png",
+							"name": "character name 8"
+						}
+					],
+					"versus": "team 8 <span>VS</span> team8",
+					"youtubeID": "pUlXQJQ_A38",
+					"youtubeParams": "start=250"
+				}
+			]
+		},
+		"final": {
+			"stage": [
+				{
+					"name": "Stage name 3",
+					"time": "00:00.000(WIN)",
+					"char": [
+						{
+							"ball": "c01.png",
+							"name": "character name 1"
+						},
+						{
+							"ball": "c04.png",
+							"name": "character name 4"
+						},
+						{
+							"ball": "c08.png",
+							"name": "character name 8"
+						},
+						{
+							"ball": "c02.png",
+							"name": "character name 2"
+						}
+					],
+					"versus": "team 8 <span>VS</span> team 7",
+					"youtubeID": "pUlXQJQ_A38",
+					"youtubeParams": "start=300"
+				},
+				{
+					"name": "Stage name 1",
+					"time": "00:00.000(WIN)",
+					"char": [
+						{
+							"ball": "c03.png",
+							"name": "character name 3"
+						},
+						{
+							"ball": "c07.png",
+							"name": "character name 7"
+						},
+						{
+							"ball": "c05.png",
+							"name": "character name 5"
+						},
+						{
+							"ball": "c06.png",
+							"name": "character name 6"
+						}
+					],
+					"versus": "team 8 <span>VS</span> team 7",
+					"youtubeID": "pUlXQJQ_A38",
+					"youtubeParams": "start=350"
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="website-ja" lang="ja-JP">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <meta name="format-detection" content="telephone=no, email=no, address=no">
+    <meta name="robots" content="noindex">
+    <meta name="author" content="dummy">
+    <meta name="copyright" content="&copy;Dummy">
+    <meta name="keywords" content="<mt:Include module='キーワード'>">
+    <meta name="description" content="<mt:Include module='ディスクリプション'>">
+    <meta property="og:url" content="<mt:BlogURL>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<mt:Include module='タイトル'>">
+    <meta property="og:image" content="<mt:BlogURL>assets/common/img/ogp.png">
+    <meta property="og:description" content="<mt:Include module='ディスクリプション'>">
+    <meta property="og:site_name" content="<mt:Include module='タイトル'>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="<mt:BlogURL>assets/common/img/ogp.png">
+    <meta name="apple-mobile-web-app-title" content="<mt:Include module='iPhone用ショートタイトル'>">
+    <title><mt:Include module='タイトル'></title>
+    <link rel="shortcut icon" href="<mt:BlogURL>favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=M+PLUS+1p:400,500,700&amp;display=swap">
+    <link rel="stylesheet" media="screen and (min-width:737px)" href="<mt:BlogURL>assets/common/css/pc.css?202210">
+    <link rel="stylesheet" media="screen and (max-width:736px)" href="<mt:BlogURL>assets/common/css/sp.css?202210">
+    <link rel="stylesheet" media="screen and (min-width:737px)" href="<mt:BlogURL>assets/regionals/css/pc.css?202210">
+    <link rel="stylesheet" media="screen and (max-width:736px)" href="<mt:BlogURL>assets/regionals/css/sp.css?202210">
+    <script type="application/ld+json">
+      [
+        {
+          "@context": "http://schema.org",
+          "@type": "WebSite",
+          "name": "<mt:Include module='タイトル'>",
+          "url": "<mt:BlogURL>"
+        },
+        {
+          "@context": "http://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@id": "<mt:BlogURL>",
+                "name": "<mt:Include module='タイトル'>"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@id": "<mt:BlogURL>regionals/",
+                "name": "<mt:Include module='タイトル'>"
+              }
+            }
+          ]
+        }
+      ]
+    </script>
+    <script src="/event/2021/assets/common/js/modernizr.js"></script>
+  </head>
+  <body>
+    <noscript>
+      <div class="m-noscript">
+        <div class="m-noscript__wrap">This page requires JavaScripts.</div>
+      </div>
+    </noscript><!--#include virtual="<mt:BlogRelativeURL>assets/common/inc/header.html" -->
+    <main class="main page-regionals">
+      <div class="page-header">
+        <div class="page-header__inner">
+          <h1 class="page-header__title">REGIONALS</h1><mt:if tag="BlogName" like="グランプリ">
+<mt:SetVar name="descPrefix" value="地方予選大会結果">
+<mt:else>
+<mt:SetVar name="descPrefix" value="ブロック代表決定戦結果">
+</mt:If>
+          <p class="page-header__lead"><mt:GetVar name='descPrefix'></p>
+        </div>
+      </div>
+      <div class="page-contents">
+        <ul class="anchor-nav"><mt:Entries>
+          <li class="anchor-nav__item"><a class="anchor-nav__link js-tournament-btn" href="#<mt:If tag="anchor_link"><mt:anchor_link></mt:If>"><mt:EntryTitle></a></li></mt:Entries>
+        </ul><mt:Entries>
+        <section class="contents-section js-eventResult" id="<mt:If tag='anchor_link'><mt:anchor_link></mt:If>" data-qualified="<mt:If tag='qualified_team'><mt:qualified_team></mt:If>" data-displayed="<mt:If tag='displayed_team'><mt:displayed_team></mt:If>" data-ngname="<mt:If tag='ng_name'><mt:ng_name></mt:If>" data-ngnamepic="<mt:If tag='ng_name_pic'><mt:ng_name_pic></mt:If>" data-stageid="<mt:If tag='stage1_id'><mt:stage1_id></mt:If><mt:If tag='stage2_id'>,<mt:stage2_id></mt:If>">
+          <div class="contents-block">
+            <h3 class="contents-block__title"><mt:EntryTitle></h3>
+            <div class="contents-block__inner">
+              <div class="contents-block__item">
+                <h4 class="regional-block__headline">Winner</h4><mt:If tag="winner_a">
+<mt:If tag="winner_b">
+                <div class="regional-block__item">
+                  <p class="regional-block__headline-sub">Block A</p>
+                  <p class="regional-block__text"><mt:If tag='winner_a_namepic'><img src="<mt:winner_a_namepicAsset><mt:AssetURL></mt:winner_a_namepicAsset>"><mt:Else><mt:winner_a></mt:If></p><mt:If tag='winner_a_pic'>
+                  <div class="regional-block__img-wrap"><img class="regional-block__img" src="<mt:winner_a_picAsset><mt:AssetURL></mt:winner_a_picAsset>"></div></mt:If>
+                </div>
+                <div class="regional-block__item">
+                  <p class="regional-block__headline-sub">Block B</p>
+                  <p class="regional-block__text"><mt:If tag='winner_b_namepic'><img src="<mt:winner_b_namepicAsset><mt:AssetURL></mt:winner_b_namepicAsset>"><mt:Else><mt:winner_b></mt:If></p>
+                  <div class="regional-block__img-wrap"><img class="regional-block__img" src="<mt:winner_b_picAsset><mt:AssetURL></mt:winner_b_picAsset>"></div>
+                </div><mt:Else>
+                <div class="regional-block__item">
+                  <p class="regional-block__text"><mt:If tag='winner_a_namepic'><img src="<mt:winner_a_namepicAsset><mt:AssetURL></mt:winner_a_namepicAsset>"><mt:Else><mt:winner_a></mt:If></p><mt:If tag='winner_a_pic'>
+                  <div class="regional-block__img-wrap"><img class="regional-block__img" src="<mt:winner_a_picAsset><mt:AssetURL></mt:winner_a_picAsset>"></div></mt:If>
+                </div></mt:If>
+</mt:If>
+<mt:If tag="winner_a" eq="">
+                <p class="regional-block__text">Coming soon</p></mt:If>
+              </div>
+              <div class="contents-block__item">
+                <h4 class="regional-block__headline">1st round result</h4>
+                <div class="regional-results">
+                  <p class="regional-results__title js-accordion <mt:If name='__last__'>is-open</mt:If>">Tournament</p>
+                  <div class="regional-results__block">
+                    <div class="regional-results__inner">
+                      <div class="regional-block__bg">
+                        <div class="regional-results__tournament-thumb"></div><mt:If tag='tournament_pic'><img src="<mt:tournament_picAsset><mt:AssetURL></mt:tournament_picAsset>"><mt:Else>
+<mt:If tag='text_for_update'>
+                        <p class="regional-block__text"><mt:text_for_update></p><mt:Else>
+                        <p class="regional-block__text">Coming soon</p></mt:If>
+</mt:If>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="contents-block__item">
+                <h4 class="regional-block__headline">2nd round result</h4>
+                <div class="regional-results">
+                  <p class="regional-results__title js-accordion <mt:If name='__last__'>is-open</mt:If>">Tier</p>
+                  <div class="regional-results__block">
+                    <div class="regional-results__inner js-naviAndTables"><mt:If tag='json_up'>
+                      <ul class="regional-resultsNavi">
+                        <li class="regional-resultsNavi__item"><a class="regional-resultsNavi__link js-tournament-btn" href="" data-tabIndex="2">Total</a></li>
+                        <li class="regional-resultsNavi__item"><a class="regional-resultsNavi__link js-tournament-btn" href="" data-tabIndex="0">Stage 1</a></li>
+                        <li class="regional-resultsNavi__item"><a class="regional-resultsNavi__link js-tournament-btn" href="" data-tabIndex="1">Stage 2</a></li>
+                      </ul>
+                      <div class="regional-resultStName">
+                        <div class="regional-resultStName__item" data-stIndex="0">
+                          <p class="regional-resultStName__title">Stage name</p>
+                          <p class="regional-resultStName__text"><mt:If tag='stage_name1'><mt:stage_name1></mt:If></p>
+                        </div>
+                        <div class="regional-resultStName__item" data-stIndex="1">
+                          <p class="regional-resultStName__title">Stage name</p>
+                          <p class="regional-resultStName__text"><mt:If tag='stage_name2'><mt:stage_name2></mt:If></p>
+                        </div>
+                      </div>
+                      <div class="regional-resultsTables js-tableCloseContainer js-tableToLoadJson"></div><mt:Else>
+                      <div class="regional-block__bg">
+                        <p class="regional-block__text">Coming soon</p>
+                      </div></mt:If>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section></mt:Entries>
+      </div>
+    </main><!--#include virtual="<mt:BlogRelativeURL>assets/common/inc/footer.html" -->
+    <script src="/event/2021/assets/common/js/libs.js?202210"></script>
+    <script src="/event/2021/assets/common/js/bundle.js?202210"></script>
+    <script src="<mt:BlogURL>assets/regionals/js/bundle.js?202210"></script>
+  </body>
+</html>

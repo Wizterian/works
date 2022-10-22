@@ -1,0 +1,149 @@
+.footer {
+  background: $black;
+
+  &__wrap {
+    padding: 25px 15px;
+
+    @media screen and (min-width: 737px) {
+      padding: 40px 15px;
+    }
+  }
+
+  &__nav {
+    margin-bottom: 20px;
+
+    @media screen and (min-width: 737px) {
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+  }
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  list-style: none;
+
+  &__item {
+    flex: 0 0 50%;
+    width: 50%;
+    box-sizing: border-box;
+    margin-bottom: 1px;
+    line-height: 0;
+
+    &:nth-child(odd) {
+      flex: 0 0 calc(50% - 1px);
+      width: calc(50% - 1px);
+      margin-right: 1px;
+    }
+
+    @media screen and (min-width: 737px) {
+      flex: 0 0 calc(50% - 1px);
+      width: calc(50% - 1px);
+      margin-bottom: 2px;
+    }
+  }
+
+  &__link {
+    display: block;
+    background-color: rgba(255, 255, 255, .1);
+    text-align: center;
+    height: 45px;
+    line-height: 45px;
+    color: #fff;
+    font-size: 2.0rem;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+.sharelist {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  @media screen and (min-width: 737px) {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  &__item {
+    margin: 0 17px;
+  }
+
+  .img {
+    width: 45px;
+    height: 45px;
+    @include hide-text();
+
+    @media screen and (min-width: 737px) {
+      transition: opacity 0.3s ease-in-out;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    &--facebook {
+      @include img-bg(
+        $website_dir + "/assets/common/img/btn_facebook.png",
+        (
+          scale: 0.5
+        )
+      );
+
+      @media screen and (min-width: 737px) {
+        width: 60px;
+        height: 60px;
+        background-size: 60px auto;
+      }
+    }
+
+    &--twitter {
+      @include img-bg(
+        $website_dir + "/assets/common/img/btn_twitter.png",
+        (
+          scale: 0.5
+        )
+      );
+
+      @media screen and (min-width: 737px) {
+        width: 60px;
+        height: 60px;
+        background-size: 60px auto;
+      }
+    }
+
+    &--line {
+      @include img-bg(
+        $website_dir + "/assets/common/img/btn_line.png",
+        (
+          scale: 0.5
+        )
+      );
+
+      @media screen and (min-width: 737px) {
+        width: 60px;
+        height: 60px;
+        background-size: 60px auto;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 736px) {
+  .footer__wrap {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 737px) {
+  .footer__wrap {
+    margin: 0 auto;
+  }
+}
+

@@ -1,0 +1,110 @@
+include /event/2021/assets/common/pug/_variable
+
+-
+  var state = {
+    logoText: {
+      ja: 'LOGO'
+    },
+    gnav: {
+      top: {
+        link:{
+          ja: gState.websiteDir['ja']
+        },
+        text:{
+          ja:'Top'
+        }
+      },
+      regionals: {
+        link:{
+          ja: gState.websiteDir['ja'] + 'regionals/'
+        },
+        text:{
+          ja:'Regionals'
+        }
+      },
+      finalists: {
+        link:{
+          ja: gState.websiteDir['ja'] + 'finalists/'
+        },
+        text:{
+          ja:'Finalists'
+        },
+        sub: {
+          ja: [
+            {
+              link: gState.websiteDir['ja'] + 'finalists/',
+              text: 'Finalists Top'
+            },
+            {
+              link: gState.websiteDir['ja'] + 'finalists/#region1',
+              text: 'Region 1'
+            },
+            {
+              link: gState.websiteDir['ja'] + 'finalists/#region2',
+              text: 'Region 2'
+            },
+            {
+              link: gState.websiteDir['ja'] + 'finalists/#region3',
+              text: 'Region 3'
+            },
+            {
+              link: gState.websiteDir['ja'] + 'finalists/#region4',
+              text: 'Region 4'
+            },
+            {
+              link: gState.websiteDir['ja'] + 'finalists/#region5',
+              text: 'Region 5'
+            },
+            {
+              link: gState.websiteDir['ja'] + 'finalists/#region6',
+              text: 'Region 6'
+            }
+          ]
+        }
+      },
+      other: {
+        text:{
+          ja:'Others continue...'
+        }
+      },
+    }
+  };
+
+header.header.js-header
+  .header__wrap
+    .header__logo
+      a.header__logoLink(href=gState.websiteDir[website]) LOGO
+
+    .header__navi.js-sp-menu-btn
+      .header__lines--close
+        span.header__line
+        span.header__line
+      .header__lines--open
+        span.header__line
+        span.header__line
+
+    nav.header__nav.js-sp-menu
+      .header__navinner
+        ul.gNav
+          li.gNav__item.gNav__item--top
+            a.gNav__link(
+              href = state.gnav.top.link[website],
+            ) #{state.gnav.top.text[website]}
+
+          li.gNav__item.gNav__item--regionals
+            a.gNav__link(
+              href=state.gnav.regionals.link[website],
+            ) #{state.gnav.regionals.text[website]}
+          li.gNav__item.gNav__item--finalists
+            span.gNav__link.gNav__link--sub.js-accordion #{state.gnav.finalists.text[website]}
+            ul.gNav__sub
+              - for (var x = 0; x < state.gnav.finalists.sub[website].length; x++)
+                li.gNav__subitem
+                  a.gNav__sublink(
+                    href=state.gnav.finalists.sub[website][x].link,
+                  ) #{state.gnav.finalists.sub[website][x].text}
+          li.gNav__item
+            a.gNav__link(
+              href='',
+              style='pointer-events: none'
+            ) #{state.gnav.other.text[website]}

@@ -1,0 +1,30 @@
+[
+	{
+		"name": "name 1 in team 2",
+		"pos": "Lead",
+		"leader": true,
+		"rank": "100",
+		"tw": "https://twitter.com/"
+	},
+	{
+		"name": "name 2 in team 2",
+		"pos": "Second",
+		"leader": false,
+		"rank": "202",
+		"tw": ""
+	},
+	{
+		"name": "name 3 in team 2",
+		"pos": "Third",
+		"leader": false,
+		"rank": "401",
+		"tw": "https://twitter.com/"
+	},
+	{
+		"name": "name 4 in team 2",
+		"pos": "Anchor",
+		"leader": false,
+		"rank": "648",
+		"tw": ""
+	}
+]

@@ -1,0 +1,41 @@
+include /event/2021/assets/common/pug/_variable
+
+.top-slide
+  .top-slide__inner.js-slide
+    if (build === 'local')
+      - for (var x = 0; x < 5; x++)
+        .top-slide__item
+          a.top-slide__link(href="#")
+            .top-slide__imgArea
+              img.top-slide__img(
+                src=`${gState.websiteDir[website]}assets/index/img/slide_img.png`,
+                alt=""
+              )
+            p.top-slide__text Slider item #{x}
+
+    else
+      mt:Entries(lastn='6')
+        .top-slide__item
+          <mt:If tag='topKvBottomSliderLinkTarget' eq='_blank'>
+          a.top-slide__link(
+            href!="<mt:URL>",
+            target="_blank",
+            rel="noopener"
+          )
+            .top-slide__imgArea
+              img.top-slide__img(
+                src!="<mt:topKvBottomSliderImgAsset><mt:AssetURL></mt:topKvBottomSliderImgAsset>",
+                alt!="<mt:topKvBottomSliderText>"
+              )
+            p.top-slide__text <mt:topKvBottomSliderText trim_to='47+…'>
+          <mt:Else>
+          a.top-slide__link(
+            href!="<mt:URL>"
+          )
+            .top-slide__imgArea
+              img.top-slide__img(
+                src!="<mt:topKvBottomSliderImgAsset><mt:AssetURL></mt:topKvBottomSliderImgAsset>",
+                alt!="<mt:topKvBottomSliderText>"
+              )
+            p.top-slide__text <mt:topKvBottomSliderText trim_to='47+…'>
+          </mt:If>
