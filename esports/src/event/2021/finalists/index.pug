@@ -1,0 +1,115 @@
+extends /event/2021/assets/common/pug/_Layout
+
+include /event/2021/assets/common/pug/_variable_finalists
+
+block pageState
+  -
+    var pageState = {
+      updateTimeStamp: '202210',
+      title: {
+        ja: `FINALISTS | ${gState.title[website]}`
+      },
+      description: {
+        ja: gState.description[website]
+      },
+      keywords: {
+        ja: gState.keywords[website]
+      },
+      url: {
+        ja: gState.websiteUrl
+      }
+    }
+block keywords
+  meta(name="keywords", content=pageState.keywords[website])
+
+block page_stylesheet
+  link(rel="stylesheet", media="screen and (min-width:737px)", href=`${gState.websiteDir[website]}assets/finalists/css/pc.css?${pageState.updateTimeStamp}`)
+  link(rel="stylesheet", media="screen and (max-width:736px)", href=`${gState.websiteDir[website]}assets/finalists/css/sp.css?${pageState.updateTimeStamp}`)
+
+block json-ld
+  script(type='application/ld+json').
+    [
+      {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "name": "#{gState.title[website]}",
+        "url": "#{gState.websiteUrl}#{gState.websiteDir[website]}"
+      },
+      {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}",
+              "name": "#{gState.title[website]}"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}finalists/",
+              "name": "#{pageState.title[website]}"
+            }
+          }
+        ]
+      }
+    ]
+
+block main
+  main.main.page-finalists
+    .page-header
+      .page-header__inner
+        h1.page-header__title FINALISTS
+    .page-contents
+      ul.anchor-nav
+        - for (var x = 0; x < finalistsState.games[website].length; x++)
+          li.anchor-nav__item
+            a.anchor-nav__link(
+              href=`#${finalistsState.games[website][x].area}`,
+            ) !{finalistsState.games[website][x].title}
+
+      section.contents-section
+        - for (var x = 0; x < finalistsState.games[website].length; x++)
+          .contents-block(id=`${finalistsState.games[website][x].area}`)
+            h3.contents-block__title !{finalistsState.games[website][x].title}
+            .contents-block__inner
+              .contents-block__item
+                //- 2 teams
+                if finalistsState.games[website][x].winner.length >= 2
+                  .regional-block__item.finalists-block__item
+                    p.regional-block__headline-sub Block A
+                    p.regional-block__text !{finalistsState.games[website][x].winner[0].name}
+                    .regional-block__img-wrap 
+                      img.regional-block__img(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][x].winner[0].teamID}/img/team.png`)
+                    .finalistsDetail__btn
+                      a.btn__secondary(
+                        href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][x].winner[0].teamID}.html`
+                      ) Team detail
+                  .regional-block__item.finalists-block__item
+                    p.regional-block__headline-sub Block B
+                    p.regional-block__text !{finalistsState.games[website][x].winner[1].name}
+                    .regional-block__img-wrap 
+                      img.regional-block__img(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][x].winner[1].teamID}/img/team.png`)
+                    .finalistsDetail__btn
+                      a.btn__secondary(
+                        href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][x].winner[1].teamID}.html`
+                    ) Team detail
+                //- 1 team
+                else if finalistsState.games[website][x].winner.length == 1
+                  .regional-block__item.finalists-block__item
+                    p.regional-block__text !{finalistsState.games[website][x].winner[0].name}
+                    .regional-block__img-wrap 
+                      img.regional-block__img(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][x].winner[0].teamID}/img/team.png`)
+                    .finalistsDetail__btn
+                      a.btn__secondary(
+                        href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][x].winner[0].teamID}.html`
+                      ) Team detail
+
+block page_script_bottom
+  script(src="https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.prod.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js")
+  script(src=`${gState.websiteDir[website]}assets/finalists/js/bundle.js?${pageState.updateTimeStamp}`)

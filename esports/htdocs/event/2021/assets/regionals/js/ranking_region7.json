@@ -1,0 +1,258 @@
+{
+  "520010": {
+    "ranking": [
+      {
+        "rank": 1,
+        "user_name": "region7_st1_user1",
+        "team_name": "region7_st1_team1",
+        "time": "2:01.01"
+      },
+      {
+        "rank": 2,
+        "user_name": "region7_st1_user2",
+        "team_name": "region7_st1_team2",
+        "time": "2:01.02"
+      },
+      {
+        "rank": 3,
+        "user_name": "region7_st1_user3",
+        "team_name": "region7_st1_team3",
+        "time": "2:01.03"
+      },
+      {
+        "rank": 4,
+        "user_name": "region7_st1_user4",
+        "team_name": "region7_st1_team4",
+        "time": "2:01.04"
+      },
+      {
+        "rank": 5,
+        "user_name": "region7_st1_user5",
+        "team_name": "region7_st1_team5",
+        "time": "2:01.05"
+      },
+      {
+        "rank": 6,
+        "user_name": "region7_st1_user6",
+        "team_name": "region7_st1_team6",
+        "time": "2:01.06"
+      },
+      {
+        "rank": 7,
+        "user_name": "region7_st1_user7",
+        "team_name": "region7_st1_team7",
+        "time": "2:01.07"
+      },
+      {
+        "rank": 8,
+        "user_name": "region7_st1_user8",
+        "team_name": "region7_st1_team8",
+        "time": "2:01.08"
+      },
+      {
+        "rank": 9,
+        "user_name": "region7_st1_user9",
+        "team_name": "region7_st1_team9",
+        "time": "2:01.09"
+      },
+      {
+        "rank": 10,
+        "user_name": "region7_st1_user10",
+        "team_name": "region7_st1_team10",
+        "time": "2:01.10"
+      }
+    ]
+  },
+  "520011": {
+    "ranking": [
+      {
+        "rank": 1,
+        "user_name": "region7_st2_user1",
+        "team_name": "region7_st2_team1",
+        "time": "2:02.01"
+      },
+      {
+        "rank": 2,
+        "user_name": "region7_st2_user2",
+        "team_name": "region7_st2_team2",
+        "time": "2:02.02"
+      },
+      {
+        "rank": 3,
+        "user_name": "region7_st2_user3",
+        "team_name": "region7_st2_team3",
+        "time": "2:02.03"
+      },
+      {
+        "rank": 4,
+        "user_name": "region7_st2_user4",
+        "team_name": "region7_st2_team4",
+        "time": "2:02.04"
+      },
+      {
+        "rank": 5,
+        "user_name": "region7_st2_user5",
+        "team_name": "region7_st2_team5",
+        "time": "2:02.05"
+      },
+      {
+        "rank": 6,
+        "user_name": "region7_st2_user6",
+        "team_name": "region7_st2_team6",
+        "time": "2:02.06"
+      },
+      {
+        "rank": 7,
+        "user_name": "region7_st2_user7",
+        "team_name": "region7_st2_team7",
+        "time": "2:02.07"
+      },
+      {
+        "rank": 8,
+        "user_name": "region7_st2_user8",
+        "team_name": "region7_st2_team8",
+        "time": "2:02.08"
+      },
+      {
+        "rank": 9,
+        "user_name": "region7_st2_user9",
+        "team_name": "region7_st2_team9",
+        "time": "2:02.09"
+      },
+      {
+        "rank": 10,
+        "user_name": "region7_st2_user10",
+        "team_name": "region7_st2_team10",
+        "time": "2:02.10"
+      }
+    ]
+  },
+  "520012": {
+    "ranking": [
+      {
+        "rank": 1,
+        "user_name": "region7_st3_user1",
+        "team_name": "region7_st3_team1",
+        "time": "2:03.01"
+      },
+      {
+        "rank": 2,
+        "user_name": "region7_st3_user2",
+        "team_name": "region7_st3_team2",
+        "time": "2:03.02"
+      },
+      {
+        "rank": 3,
+        "user_name": "region7_st3_user3",
+        "team_name": "region7_st3_team3",
+        "time": "2:03.03"
+      },
+      {
+        "rank": 4,
+        "user_name": "region7_st3_user4",
+        "team_name": "region7_st3_team4",
+        "time": "2:03.04"
+      },
+      {
+        "rank": 5,
+        "user_name": "region7_st3_user5",
+        "team_name": "region7_st3_team5",
+        "time": "2:03.05"
+      },
+      {
+        "rank": 6,
+        "user_name": "region7_st3_user6",
+        "team_name": "region7_st3_team6",
+        "time": "2:03.06"
+      },
+      {
+        "rank": 7,
+        "user_name": "region7_st3_user7",
+        "team_name": "region7_st3_team7",
+        "time": "2:03.07"
+      },
+      {
+        "rank": 8,
+        "user_name": "region7_st3_user8",
+        "team_name": "region7_st3_team8",
+        "time": "2:03.08"
+      },
+      {
+        "rank": 9,
+        "user_name": "region7_st3_user9",
+        "team_name": "region7_st3_team9",
+        "time": "2:03.09"
+      },
+      {
+        "rank": 10,
+        "user_name": "region7_st3_user10",
+        "team_name": "region7_st3_team10",
+        "time": "2:03.10"
+      }
+    ]
+  },
+  "total": {
+    "ranking": [
+      {
+        "rank": 1,
+        "user_name": "region7_ttl_user1",
+        "team_name": "region7_ttl_team1",
+        "time": "2:03.01"
+      },
+      {
+        "rank": 2,
+        "user_name": "region7_ttl_user2",
+        "team_name": "region7_ttl_team2",
+        "time": "2:03.02"
+      },
+      {
+        "rank": 3,
+        "user_name": "region7_ttl_user3",
+        "team_name": "region7_ttl_team3",
+        "time": "2:03.03"
+      },
+      {
+        "rank": 4,
+        "user_name": "region7_ttl_user4",
+        "team_name": "region7_ttl_team4",
+        "time": "2:03.04"
+      },
+      {
+        "rank": 5,
+        "user_name": "region7_ttl_user5",
+        "team_name": "region7_ttl_team5",
+        "time": "2:03.05"
+      },
+      {
+        "rank": 6,
+        "user_name": "region7_ttl_user6",
+        "team_name": "region7_ttl_team6",
+        "time": "2:03.06"
+      },
+      {
+        "rank": 7,
+        "user_name": "region7_ttl_user7",
+        "team_name": "region7_ttl_team7",
+        "time": "2:03.07"
+      },
+      {
+        "rank": 8,
+        "user_name": "region7_ttl_user8",
+        "team_name": "region7_ttl_team8",
+        "time": "2:03.08"
+      },
+      {
+        "rank": 9,
+        "user_name": "region7_ttl_user9",
+        "team_name": "region7_ttl_team9",
+        "time": "2:03.09"
+      },
+      {
+        "rank": 10,
+        "user_name": "region7_ttl_user10",
+        "team_name": "region7_ttl_team10",
+        "time": "2:03.10"
+      }
+    ]
+  }
+}

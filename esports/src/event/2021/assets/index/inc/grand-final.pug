@@ -1,0 +1,80 @@
+include /event/2021/assets/common/pug/_variable
+-
+  if (build === undefined) {
+    var build = "mt";
+  }
+
+.top-gFinal__wrapper#grand-final
+  section.top-gFinal.fade-up
+    .title.title--blk.on-brightColor
+      h2.title__main FINAL RESULTS
+    .top-gFinalBody
+
+      .top-gFinalBlock
+        h4.top-gFinalTeam__place.fade-up Winner
+
+        .top-gFinalTeam__item.fade-up
+          p.top-gFinalTeam__name Team name 1
+          .top-gFinalTeam__thumb
+            a(href="/event/2021/finalists/team1.html")
+              img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team1/img/team.png`)
+
+      .top-gFinalBlock.lead
+        .top-about__title.fade-up Winner this year is
+        .top-about__lead.fade-up Team name 1!
+
+      .top-gFinalBlock
+        h4.top-gFinalTeam__place.fade-up 2nd
+
+        .top-gFinalTeam__item.fade-up
+          p.top-gFinalTeam__name Team name 2
+          .top-gFinalTeam__thumb
+            a(href="/event/2021/finalists/team2.html")
+              img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team2/img/team.png`)
+
+      .top-gFinalBlock
+        h4.top-gFinalTeam__place.fade-up 3rd
+
+        .top-gFinalTeam__items.twoCols
+
+          .top-gFinalTeam__item.fade-up
+            p.top-gFinalTeam__name Team name 3
+            .top-gFinalTeam__thumb
+              a(href="/event/2021/finalists/team3.html")
+                img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team3/img/team.png`)
+
+          .top-gFinalTeam__item.fade-up
+            p.top-gFinalTeam__name Team name 4
+            .top-gFinalTeam__thumb
+              a(href="/event/2021/finalists/team4.html")
+                img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team4/img/team.png`)
+
+
+      .top-gFinalBlock
+        h4.top-gFinalTeam__place.fade-up Best 8
+
+        .top-gFinalTeam__items.twoCols
+
+          .top-gFinalTeam__item.fade-up
+            p.top-gFinalTeam__name Team name 5
+            .top-gFinalTeam__thumb
+              a(href="/event/2021/finalists/team5.html")
+                img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team5/img/team.png`)
+
+          .top-gFinalTeam__item.fade-up
+            p.top-gFinalTeam__name Team name 6
+            .top-gFinalTeam__thumb
+              a(href="/event/2021/finalists/team6.html")
+                img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team6/img/team.png`)
+
+          .top-gFinalTeam__item.fade-up
+            p.top-gFinalTeam__name Team name 7
+            .top-gFinalTeam__thumb
+              a(href="/event/2021/finalists/team7.html")
+                img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team7/img/team.png`)
+
+          .top-gFinalTeam__item.fade-up
+            p.top-gFinalTeam__name Team name 8
+            .top-gFinalTeam__thumb
+              a(href="/event/2021/finalists/team8.html")
+                img.top-gFinalTeam__thumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/team8/img/team.png`)

@@ -1,0 +1,84 @@
+include /event/2021/assets/common/pug/_variable
+
+-
+  var state = {
+    nav: {
+      top: {
+        link:{
+          ja: gState.websiteDir['ja']
+        },
+        text:{
+          ja:'Top'
+        }
+      },
+      regionals: {
+        link:{
+          ja: gState.websiteDir['ja'] + 'regionals/'
+        },
+        text:{
+          ja:'Regionals'
+        }
+      },
+      finalists: {
+        link:{
+          ja: gState.websiteDir['ja'] + 'finalists/'
+        },
+        text:{
+          ja:'Finalists'
+        }
+      },
+      other: {
+        text:{
+          ja:'Others continue...'
+        }
+      },
+    },
+    contact:{
+      ja: "mailto:test@test.com?subject=【test subject】"
+    }
+  };
+
+footer.footer.js-footer
+  .footer__wrap
+    .footer__nav
+      nav.nav
+        li.nav__item
+          a.nav__link(
+            href=state.nav.top.link[website],
+          ) #{state.nav.top.text[website]}
+        li.nav__item
+          a.nav__link(
+            href=state.nav.regionals.link[website],
+          ) #{state.nav.regionals.text[website]}
+        li.nav__item
+          a.nav__link(
+            href=state.nav.finalists.link[website],
+          ) #{state.nav.finalists.text[website]}
+        li.nav__item
+          a.nav__link(
+            href='',
+            style='pointer-events: none'
+          ) #{state.nav.other.text[website]}
+
+    .footer__share
+      ul.sharelist
+        li.sharelist__item
+          a.img.img--twitter.js-share-twitter(
+            href="#",
+            rel="noopener",
+            data-url=gState.share.url.twitter[website]
+          ) Twitter
+        li.sharelist__item
+          a.img.img--line.js-share-line(
+            href="#",
+            rel="noopener",
+            data-url=gState.share.url.line[website]
+          ) LINE
+        li.sharelist__item
+          a.img.img--facebook.js-share-facebook(
+            href="#",
+            rel="noopener",
+            data-url=gState.share.url.facebook[website]
+          ) Facebook
+
+    small.footer__copyright &copy; Dummy

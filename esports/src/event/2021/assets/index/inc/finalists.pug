@@ -1,0 +1,97 @@
+include /event/2021/assets/common/pug/_variable
+
+include /event/2021/assets/common/pug/_variable_finalists
+
+section.top-finalist
+  .top-finalist__inner.fade-up
+    .top-finalistItems
+      .top-finalistItems__inner
+        if finalistsState.games[website][0].winner[0].name
+          - var twoClass = 'two'
+          .top-finalistItem(class=`${twoClass}`)
+            h3.top-finalistItem__title Region 1
+            .top-finalistItem__blockContainer
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][0].winner[0].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][0].winner[0].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][0].winner[0].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][0].winner[0].teamID}/img/team.jpg`)
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][0].winner[1].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][0].winner[1].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][0].winner[1].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][0].winner[1].teamID}/img/team.jpg`)
+
+        if finalistsState.games[website][1].winner[0].name
+          .top-finalistItem
+            h3.top-finalistItem__title Region 2
+            .top-finalistItem__blockContainer
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][1].winner[0].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][1].winner[0].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][1].winner[0].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][1].winner[0].teamID}/img/team.jpg`)
+
+        if finalistsState.games[website][2].winner[0].name
+          .top-finalistItem
+            h3.top-finalistItem__title Region 3
+            .top-finalistItem__blockContainer
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][2].winner[0].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][2].winner[0].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][2].winner[0].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][2].winner[0].teamID}/img/team.jpg`)
+
+        if finalistsState.games[website][3].winner[0].name
+          .top-finalistItem
+            h3.top-finalistItem__title Region 4
+            .top-finalistItem__blockContainer
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][3].winner[0].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][3].winner[0].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][3].winner[0].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][3].winner[0].teamID}/img/team.jpg`)
+
+        if finalistsState.games[website][4].winner[0].name
+          .top-finalistItem(class='two')
+            h3.top-finalistItem__title Region 5
+            .top-finalistItem__blockContainer
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][4].winner[0].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][4].winner[0].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][4].winner[0].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][4].winner[0].teamID}/img/team.jpg`)
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][4].winner[1].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][4].winner[1].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][4].winner[1].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][4].winner[1].teamID}/img/team.jpg`)
+
+        if finalistsState.games[website][5].winner[0].name
+          .top-finalistItem.left
+            h3.top-finalistItem__title Region 6
+            .top-finalistItem__blockContainer
+              .top-finalistItem__block
+                h4.top-finalistItem__teamName !{finalistsState.games[website][5].winner[0].name}
+                .top-finalistItem__teamThumb(data-img=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][5].winner[0].teamID}/img/team.jpg`)
+                  a(
+                    href=`${gState.websiteDir[website]}finalists/${finalistsState.games[website][5].winner[0].teamID}.html`
+                  )
+                    img.top-finalistItem__teamThumbImg(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${finalistsState.games[website][5].winner[0].teamID}/img/team.jpg`)
+
+        .btn__block
+          a.btn__secondary(href=`${gState.websiteDir[website]}finalists/`) Finalists index

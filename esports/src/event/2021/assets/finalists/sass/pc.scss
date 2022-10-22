@@ -1,0 +1,350 @@
+@charset "utf-8";
+
+$layoutType: PC;
+$scale: 1;
+@import "../../common/sass/_variable";
+@import "../../common/sass/_mixin";
+
+.page-finalists {
+
+  img {
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .page-contents {
+    padding-top: 40px;
+    padding-bottom: 0;
+  }
+
+  .anchor-nav {
+    margin: 0 auto 30px;
+  }
+
+  .regional-block__headline-sub {
+    font-weight: normal;
+  }
+
+  .regional-block__text {
+    
+  }
+
+  .contents-section {
+    padding: 0;
+  }
+
+  .contents-block__item {
+    margin-bottom: 40px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .contents-block__inner {
+    padding: 30px 5px 40px;
+  }
+
+  .regional-block__item {
+    
+    max-width: 700px;
+    margin: 0 auto;
+
+    &:nth-child(2) {
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid #b9b9b9;
+    }
+  }
+
+  .regional-block__img-wrap {
+    margin: 20px auto 0;
+  }
+
+  .btn__block {
+    margin: 40px auto 10px;
+  }
+
+  [v-cloak] {
+    display: none;
+  }
+}
+
+.finalists-section {
+  overflow: hidden;
+  max-width: 567px;
+  margin: 0 auto;
+
+  &__title {
+    padding: 16px 0;
+    font-size: 1.9rem;
+    line-height: 1;
+    text-align: center;
+    color: #fff;
+    background: #515151;
+  }
+
+  &__inner {
+    padding: 15px;
+    overflow: hidden;
+    background: #efefef;
+  }
+}
+
+.finalists-player {
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__thumb {
+    flex: 0 1 auto;
+    width: 110px;
+    position: relative;
+    overflow: hidden;
+
+    &Img {
+      display: block;
+      width: 100%;
+    }
+
+    &.leader::after {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 48px;
+      height: 48px;
+      background: url($website_dir + "/assets/finalists/img/badge-leader.png") left top / contain no-repeat;
+    }
+  }
+}
+
+.finalists-playerInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 1 auto;
+  width: calc(100% - 110px);
+  text-align-last: left;
+  position: relative;
+
+  &__name {
+    font-size: 1.9rem;
+    padding: 25px 20px 0;
+    
+  }
+
+  &__tw {
+    width: 34px;
+    height: 34px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    border-radius: 50%;
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsID0iI2ZmZmZmZiIgZD0iTTI0IDQuNTU3Yy0uODgzLjM5Mi0xLjgzMi42NTYtMi44MjguNzc1IDEuMDE3LS42MDkgMS43OTgtMS41NzQgMi4xNjUtMi43MjQtLjk1MS41NjQtMi4wMDUuOTc0LTMuMTI3IDEuMTk1LS44OTctLjk1Ny0yLjE3OC0xLjU1NS0zLjU5NC0xLjU1NS0zLjE3OSAwLTUuNTE1IDIuOTY2LTQuNzk3IDYuMDQ1LTQuMDkxLS4yMDUtNy43MTktMi4xNjUtMTAuMTQ4LTUuMTQ0LTEuMjkgMi4yMTMtLjY2OSA1LjEwOCAxLjUyMyA2LjU3NC0uODA2LS4wMjYtMS41NjYtLjI0Ny0yLjIyOS0uNjE2LS4wNTQgMi4yODEgMS41ODEgNC40MTUgMy45NDkgNC44OS0uNjkzLjE4OC0xLjQ1Mi4yMzItMi4yMjQuMDg0LjYyNiAxLjk1NiAyLjQ0NCAzLjM3OSA0LjYgMy40MTktMi4wNyAxLjYyMy00LjY3OCAyLjM0OC03LjI5IDIuMDQgMi4xNzkgMS4zOTcgNC43NjggMi4yMTIgNy41NDggMi4yMTIgOS4xNDIgMCAxNC4zMDctNy43MjEgMTMuOTk1LTE0LjY0Ni45NjItLjY5NSAxLjc5Ny0xLjU2MiAyLjQ1Ny0yLjU0OXoiLz48L3N2Zz4=") center / 20px 20px no-repeat #00acee;
+  }
+
+  &2col {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  &__position,
+  &__rank {
+    flex: 1 1 auto;
+    width: 50%;
+    color: $black;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+  
+    &::before {
+      
+      font-size: 1.5rem;
+      display: inline;
+    }
+  }
+
+  &__position {
+    text-align: left;
+
+    &::before {
+      content: "Position";
+      padding-right: 15px;
+    }
+  }
+
+  &__rank {
+    border-left: 1px solid #c6c6c6;
+
+    &::before {
+      content: "Rank";
+      padding-right: 15px;
+    }
+  }
+}
+
+.finalists-block {
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__title {
+    font-size: 1.7rem;
+    color: #fff;
+    padding: 14px 0;
+    background: $black;
+  }
+  
+  &__inner {
+    background: #fff;
+    padding: 0 50px;
+    overflow: hidden;
+  }
+
+  &__stage {
+    padding: 20px 0;
+    margin: 0 auto;
+    border-top: 1px solid #c6c6c6;
+  }
+
+  &__stageTitle {
+    padding: 20px;
+    font-size: 1.7rem;
+    line-height: 1.5;
+    margin: -0.425rem 0;
+
+    span {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+.finalists-roundInfo {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.finalists-roundInfo__left,
+.finalists-roundInfo__right {
+  flex: 1 1 auto;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.finalists-roundInfo__left{
+
+  img {
+    width: 100%;
+  }
+}
+
+.finalists-roundInfo__right{
+  padding: 10px 0;
+}
+
+.finalists-roundStage,
+.finalists-roundTier {
+  text-align: center;
+  margin: auto -.375rem;
+
+  &:nth-child(1){
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-bottom: 13px;
+  }
+
+  &__item {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    margin: -0.375rem 0;
+  }
+
+  .win {
+    color: #d20014;
+  }
+  
+  .lose {
+    color: #0099e5;
+  }
+}
+
+.finalists-roundDecks {
+
+  &__title {
+    font-size: 1.5rem;
+    
+    margin-bottom: 15px;
+  }
+}
+
+.finalists-roundDeck {
+  border-bottom: 1px solid #c6c6c6;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+
+  &:last-child {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+}
+
+.finalists-roundChars {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.finalists-roundChar {
+  flex: 1 1 auto;
+  width: 25%;
+
+  &__thumb {
+
+    &Img {
+      max-width: 80px;
+    }
+  }
+
+  &__name {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    margin: -.1875rem auto;
+  }
+}
+
+.finalistsDetail__btn {
+  margin-top: 30px;
+}

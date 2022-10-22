@@ -1,0 +1,47 @@
+extends /event/2021/assets/common/pug/_Layout
+
+include /event/2021/assets/common/pug/_variable_regionals
+
+block pageState
+  -
+    var pageState = {
+      updateTimeStamp: '202210',
+      title: {
+        ja: gState.title[website]
+      },
+      description: {
+        ja: gState.description[website]
+      },
+      url: {
+        ja: gState.websiteUrl
+      },
+      contact:{
+        ja: "mailto:test@test.com?subject=【test subject】"
+      }
+    }
+
+block page_stylesheet
+  link(rel="stylesheet", media="screen and (min-width:737px)", href=`${gState.websiteDir[website]}assets/index/css/pc.css?${pageState.updateTimeStamp}`)
+  link(rel="stylesheet", media="screen and (max-width:736px)", href=`${gState.websiteDir[website]}assets/index/css/sp.css?${pageState.updateTimeStamp}`)
+
+block header
+  <!--#include virtual="#{gState.websiteDir[website]}assets/common/inc/header.html" -->
+
+block main
+  main.main.page-top.top
+    .top-kv
+      .top-kv__inner
+        h1.top-kv__logo LOGO
+
+      a.top-kv__scroll(href="#contents") SCROLL
+
+    #contents
+
+      <!--#include virtual="#{gState.websiteDir[website]}assets_mt/index/inc/slider.html" -->
+
+      <!--#include virtual="#{gState.websiteDir[website]}assets/index/inc/grand-final.html" -->
+
+    section.top-contents Other contents continue ...
+
+block page_script_bottom
+  script(src=`${gState.websiteDir[website]}assets/index/js/bundle.js?${pageState.updateTimeStamp}`)

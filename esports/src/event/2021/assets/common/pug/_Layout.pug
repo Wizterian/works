@@ -1,0 +1,129 @@
+include /event/2021/assets/common/pug/_variable
+
+block regionalsBlock
+block finalistsBlock
+block finalistsTeamBlock
+block pageState
+  -
+    var pageState = {
+      updateTimeStamp: '202210',
+      title: {
+        ja: ''
+      },
+      description: {
+        ja: ''
+      },
+      url: {
+        ja: gState.websiteUrl
+      }
+    }
+
+doctype html
+html(lang="ja-JP", class=`website-${website}`)
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width")
+    meta(name="format-detection", content="telephone=no, email=no, address=no")
+    meta(name="robots", content="noindex")
+    meta(name="author", content="dummy")
+    meta(name="copyright", content!="&copy;Dummy")
+    block keywords
+      meta(name="keywords", content=gState.keywords[website])
+    block description
+      meta(name="description", content=pageState.description[website])
+    block ogurl
+      meta(property="og:url", content=gState.ogurl[website])
+    meta(property="og:type", content="website")
+    block ogtitle
+      meta(property="og:title", content=gState.ogSiteName[website])
+    block ogimg
+      meta(property="og:image", content=gState.ogImage[website])
+    block ogdescription
+      meta(property="og:description", content=gState.description[website])
+    block ogsitename
+      meta(property="og:site_name", content=gState.ogSiteName[website])
+
+    block twittercard
+      meta(name="twitter:card", content="summary_large_image")
+      meta(name="twitter:image", content=gState.ogImage[website])
+
+    block apptitle
+      meta(name="apple-mobile-web-app-title", content=gState.apptitle[website])
+    block title
+      title #{pageState.title[website]}
+
+    block favicon
+      link(rel="shortcut icon", href=`${gState.websiteDir[website]}favicon.ico`)
+
+    link(
+      rel="stylesheet",
+      href="https://fonts.googleapis.com/css?family=M+PLUS+1p:400,500,700&display=swap"
+    )
+
+    block common_stylesheet
+      link(
+        rel="stylesheet",
+        media="screen and (min-width:737px)",
+        href=`${gState.websiteDir[website]}assets/common/css/pc.css?${gState.updateTimeStamp}`
+      )
+      link(
+        rel="stylesheet",
+        media="screen and (max-width:736px)",
+        href=`${gState.websiteDir[website]}assets/common/css/sp.css?${gState.updateTimeStamp}`
+      )
+
+    block page_stylesheet
+
+    block json-ld
+      script(type='application/ld+json').
+        [
+          {
+            "@context": "http://schema.org",
+            "@type": "WebSite",
+            "name": "#{gState.title[website]}",
+            "url": "#{gState.websiteUrl}#{gState.websiteDir[website]}"
+          },
+          {
+            "@context": "http://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                  "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}",
+                  "name": "#{gState.title[website]}"
+                }
+              }
+            ]
+          }
+        ]
+
+    script(src=`${gState.websiteDir[website]}assets/common/js/modernizr.js`)
+
+    block page_script_head
+
+  body
+    noscript
+      .m-noscript
+        .m-noscript__wrap This page requires JavaScripts.
+
+    block body_before
+
+    block header
+      <!--#include virtual="#{gState.websiteDir[website]}assets/common/inc/header.html" -->
+
+    block main
+
+    block footer
+      <!--#include virtual="#{gState.websiteDir[website]}assets/common/inc/footer.html" -->
+
+    block pagetop
+
+    block body_after
+
+    script(src=`${gState.websiteDir[website]}assets/common/js/libs.js?${gState.updateTimeStamp}`)
+    script(src=`${gState.websiteDir[website]}assets/common/js/bundle.js?${gState.updateTimeStamp}`)
+
+    block page_script_bottom

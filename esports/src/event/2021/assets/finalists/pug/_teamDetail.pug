@@ -1,0 +1,165 @@
+extends /event/2021/assets/common/pug/_Layout
+
+include /event/2021/assets/common/pug/_variable_finalists
+
+block pageState
+  -
+    var pageState = {
+      updateTimeStamp: '202210',
+      title: {
+        ja: gState.title[website]
+      },
+      description: {
+        ja: `${gState.description[website]}`
+      },
+      keywords: {
+        ja: `${gState.keywords[website]},${finalistsState.games[website][areaOrder].winner[winnerOrder].name}`
+      },
+      url: {
+        ja: gState.websiteUrl
+      },
+      winner:
+      {
+        blockLength: `${finalistsState.games[website][areaOrder].winner.length}`,
+        title: `${finalistsState.games[website][areaOrder].title}`,
+        name: `${finalistsState.games[website][areaOrder].winner[winnerOrder].name}`,
+        teamID: `${finalistsState.games[website][areaOrder].winner[winnerOrder].teamID}`,
+        block: `${finalistsState.games[website][areaOrder].winner[winnerOrder].block}`,
+        finalTier: `${finalistsState.games[website][areaOrder].winner[winnerOrder].finalTier}`
+      }
+    }
+block keywords
+  meta(name="keywords", content=pageState.keywords[website])
+
+block page_stylesheet
+  link(rel="stylesheet", media="screen and (min-width:737px)", href=`${gState.websiteDir[website]}assets/finalists/css/pc.css?${pageState.updateTimeStamp}`)
+  link(rel="stylesheet", media="screen and (max-width:736px)", href=`${gState.websiteDir[website]}assets/finalists/css/sp.css?${pageState.updateTimeStamp}`)
+
+block json-ld
+  script(type='application/ld+json').
+    [
+      {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "name": "#{gState.title[website]}",
+        "url": "#{gState.websiteUrl}#{gState.websiteDir[website]}"
+      },
+      {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}",
+              "name": "#{gState.title[website]}"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}finalists/",
+              "name": "#{pageState.title[website]}"
+            }
+          }
+        ]
+      }
+    ]
+
+block main
+  main.main.page-finalists(id=`${pageState.winner.teamID}`)
+    .page-header
+      .page-header__inner
+        h1.page-header__title FINALISTS
+    .page-contents
+
+      section.contents-section
+        .contents-block
+          h3.contents-block__title.js-areaTitle !{pageState.winner.title}
+          .contents-block__inner
+            .contents-block__item
+              .regional-block__item
+                if pageState.winner.blockLength >= 2
+                  if winnerOrder == 0
+                    p.regional-block__headline-sub Block A
+                  else if winnerOrder == 1
+                    p.regional-block__headline-sub Block B
+                p.regional-block__text !{pageState.winner.name}
+                .regional-block__img-wrap
+                  img.regional-block__img(src=`${gState.websiteDir[website]}assets/finalists/teamdata/${pageState.winner.teamID}/img/team.png`)
+
+            .contents-block__item.finalists-section
+              h4.finalists-section__title Profiles
+              .finalists-section__inner#memberInfo
+
+                <div class="finalists-player" v-for="(a_member, index) in profiles">
+                  <div class="finalists-player__thumb" :class="{leader:a_member.leader}">
+                    <img class="finalists-player__thumbImg" :src="getMemberThumb(index)">
+                  </div>
+                  <div class="finalists-playerInfo">
+                    <div class="finalists-playerInfo__name" v-cloak>{{a_member.name}}</div>
+                    <a class="finalists-playerInfo__tw" :href="a_member.tw" target="_blank" v-if="a_member.tw"></a>
+                    <div class="finalists-playerInfo2col">
+                      <div class="finalists-playerInfo__position" v-cloak>{{a_member.pos}}</div>
+                      <div class="finalists-playerInfo__rank" v-cloak>{{a_member.rank}}</div>
+                    </div>
+                  </div>
+                </div>
+
+            div#finalistresults(data-block=`${pageState.winner.block}`, data-finaltier=`${pageState.winner.finalTier}`)
+              <div class="contents-block__item finalists-section" v-for="(an_event, key, index) in tables">
+                <h4 class="finalists-section__title" v-cloak>{{getEventName(key)}}</h4>
+                <div class="finalists-section__inner">
+                  <div v-if="key == 'regionals' && Object.keys(tables['regionals']).length == 0" class="noBR">No record</div>
+                  <div class="finalists-block" v-for="(a_round, key, index) in an_event">
+                    <h5 class="finalists-block__title" v-cloak>{{getRoundName(key)}}</h5>
+                    <template v-for="stages in a_round">
+                      <div class="finalists-block__inner">
+                        <div class="finalists-block__stageTitle" v-html="stages[0].versus"></div>
+                        <div class="finalists-block__stage" v-for="a_stage in stages">
+                          <div class="finalists-roundInfo">
+                            <div class="finalists-roundInfo__left">
+                              <img :src="getStageThumb(a_stage.name)">
+                            </div>
+                            <div class="finalists-roundInfo__right">
+                              <div class="finalists-roundStage">
+                                <h6 class="finalists-roundStage__title">Stage name</h6>
+                                <div class="finalists-roundStage__item" v-cloak>{{a_stage.name}}</div>
+                              </div>
+                              <div class="finalists-roundTier">
+                                <h6 class="finalists-roundTier__title">Time / Win or Lose</h6>
+                                <div class="finalists-roundTier__item" v-html="putWinLoseColor(a_stage.time)"></div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="finalists-roundDecks">
+                            <h5 class="finalists-roundDecks__title">characters</h5>
+                            <div class="finalists-roundDeck"> 
+                              <div class="finalists-roundChars">
+                                <div class="finalists-roundChar" v-for="char in a_stage['char']">
+                                  <div class="finalists-roundChar__thumb"><img class="finalists-roundChar__thumbImg" :src="getCharThumb(char.ball)"></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="btn__block" v-if="a_stage.youtubeID">
+                            <a :href="'https://www.youtube.com/watch?v=' + a_stage.youtubeID" target="_blank" class="btn__secondary js-YT-video-modal" :data-YT-video-id="a_stage.youtubeID" :data-YT-params="a_stage.youtubeParams" @click.prevent="getTrackingEvent">Archive</a>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+      .btn__block
+        a.btn__secondary(
+          href="./index.html",
+          ) Finalists index
+
+block page_script_bottom
+  script(src="https://cdn.jsdelivr.net/npm/vue@3.0.0/dist/vue.global.prod.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js")
+  script(src=`${gState.websiteDir[website]}assets/finalists/js/bundle.js?${pageState.updateTimeStamp}`)

@@ -1,0 +1,29 @@
+.is-show {
+  display: block !important;
+}
+
+.is-hide {
+  display: none !important;
+}
+
+@if ($layoutType == SP) {
+  .is-pc {
+    display: none !important;
+  }
+} @else {
+  .is-sp {
+    display: none !important;
+  }
+}
+
+.is-reset-mt {
+  margin-top: 0 !important;
+}
+
+$marginTop: 5;
+@while $marginTop <= 40 {
+  &.is-mt#{$marginTop} {
+    margin-top: $marginTop + px !important;
+  }
+  $marginTop: $marginTop + 5;
+}

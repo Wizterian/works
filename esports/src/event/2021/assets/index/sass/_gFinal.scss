@@ -1,0 +1,111 @@
+.top-gFinal {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+
+  img {
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
+
+  &__wrapper {
+    margin: 0 15px;
+  }
+
+  &Body {
+    width: 100%;
+    background: #fff;
+    padding: (60px * $scale) 0;
+  }
+
+  &Block {
+    margin: 0 auto (60px * $scale);
+    padding: 0 (40px * $scale) ;
+    width: 100%;
+    max-width: 610px;
+  }
+
+  .btn__block:not(:last-child) {
+    margin-bottom: 20px;
+  }
+}
+
+.top-gFinalTeam {
+  &__items {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    &.twoCols {
+      margin-bottom: -30px;
+
+      .top-gFinalTeam__item {
+        flex: 0 1 auto;
+        width: calc(50% - 10px);
+        margin-bottom: 30px;
+      }
+
+      .top-gFinalTeam__name {
+        font-size: 2.0rem;
+        margin-bottom: 12px;
+      }
+    }
+  }
+
+  &__place {
+    width: fit-content;
+    margin: 0 auto 20px;
+    font-size: 3.6rem;
+    color: $black;
+  }
+
+  &__name {
+    font-size: 2.0rem;
+    line-height: 1;
+    text-align: center;
+    margin: 0 auto 20px;
+  }
+
+  &__thumb {
+    width: 100%;
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      background: $primary;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      right: 13px;
+      bottom: 11px;
+      width: 10px;
+      height: 10px;
+      transform: rotate(45deg);
+      border-top: 1px solid #fff;
+      border-right: 1px solid #fff;
+    }
+  }
+}
+
+.top-gFinalBlock {
+  .top-about__title,
+  .top-about__lead {
+    font-size: 5.5rem;
+    text-align: center;
+  }
+}
+
+.top-gFinalTeam__leadersboard {
+  margin-bottom: 0 auto 70px;
+}

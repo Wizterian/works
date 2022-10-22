@@ -1,0 +1,237 @@
+@mixin img-bg($url, $option: ()) {
+
+  $settingScale: $scale;
+  $size: true;
+  $settingWidth: null;
+  $settingHeight: null;
+  $settingBackgroundPosition: 0 0;
+  $settingBackgroundRepeat: no-repeat;
+  $settingBackgroundSize: auto;
+  $settingDisplay: block;
+  $isDisplay: true;
+  $isBGZ: true;
+
+  @each $key, $val in $option {
+    @if ( $key == "scale" ) {
+      $settingScale: $val;
+    } @else if ( $key == "width" ) {
+      $settingWidth: $val;
+    } @else if ( $key == "height" ) {
+      $settingHeight: $val;
+    } @else if ( $key == "size" ) {
+      $size: $val;
+    } @else if ( $key == "background-position" ) {
+      $settingBackgroundPosition: $val;
+    } @else if ( $key == "background-repeat" ) {
+      $settingBackgroundRepeat: $val;
+    } @else if ( $key == "background-size" ) {
+      @if ($val == false) {
+        $isBGZ: false;
+      }
+
+      $settingBackgroundSize: $val;
+    } @else if ( $key == "display" ) {
+      $settingDisplay: $val;
+
+      @if ($val == false) {
+        $isDisplay: false;
+      }
+    }
+  }
+
+  $scaledWidth: width($url, 1 / $settingScale);
+  $scaledHeight: height($url, 1 / $settingScale);
+
+  @if ($size == true) {
+    @if ( $settingWidth == null ) {
+      width: $scaledWidth;
+    } @else {
+      width: $settingWidth;
+    }
+
+    @if ( $settingHeight == null ) {
+      height: $scaledHeight;
+    } @else {
+      height: $settingHeight;
+    }
+  }
+
+  @if ( $isDisplay == true ) {
+    display: $settingDisplay;
+  }
+
+  background-image: url($url);
+  background-repeat: $settingBackgroundRepeat;
+  background-position: $settingBackgroundPosition;
+
+  @if ( $isBGZ == true ) {
+    @if ( $settingBackgroundSize == auto ) {
+      background-size: $scaledWidth $scaledHeight;
+    } @else {
+      background-size: $settingBackgroundSize;
+    }
+  }
+
+}
+
+@mixin img-size( $url, $settingScale: null ) {
+
+  @if ( $settingScale == null ) {
+    $settingScale: $scale;
+  }
+
+  $scaledWidth: width($url, 1 / $settingScale);
+  $scaledHeight: height($url, 1 / $settingScale);
+
+  width: $scaledWidth;
+  height: $scaledHeight;
+}
+
+@mixin img-width( $url, $settingScale: null ) {
+  @if ( $settingScale == null ) {
+    $settingScale: $scale;
+  }
+  $scaledWidth: width($url, 1 / $settingScale);
+  width: $scaledWidth;
+}
+
+@mixin img-height( $url, $settingScale: null ) {
+  @if ( $settingScale == null ) {
+    $settingScale: $scale;
+  }
+  $scaledHeight: height($url, 1 / $settingScale);
+  height: $scaledHeight;
+}
+
+@mixin img-bg-center( $url, $settingScale: null ) {
+  @if ( $settingScale == null ) {
+    $settingScale: $scale;
+  }
+
+  background-image: url($url);
+  background-repeat: no-repeat;
+  background-size: ceil(width($url) * $settingScale) ceil(height($url) * $settingScale);
+}
+
+@mixin clearfix {
+  &::after {
+    content: " ";
+    display: block;
+    visibility: hidden;
+    clear: both;
+    height: 0;
+  }
+}
+
+@mixin marginfix( $before: true, $after: false ) {
+  @if ($before == true) {
+    &::before {
+      content: " ";
+      display: block;
+      clear: both;
+      width: 100%;
+      height: 0;
+      margin-bottom: -1px;
+      border-top: transparent solid 1px;
+    }
+  }
+
+  @if ($after == true) {
+    &::after {
+      content: " ";
+      display: block;
+      clear: both;
+      width: 100%;
+      height: 0;
+      margin-bottom: -1px;
+      border-top: transparent solid 1px;
+    }
+  }
+}
+
+@mixin disabled {
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+@mixin hide-text( $width: null, $settingScale: null ) {
+  @if ( $settingScale == null ) {
+    $settingScale: $scale;
+  }
+
+  @if ( $width == null ) {
+    $width: 110%;
+  } @else {
+    $width: ($width * $settingScale) + 100px;
+  }
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: $width;
+}
+
+@mixin abs-center( $horizontal: true, $vertical: true ) {
+  position: absolute;
+
+  @if ($horizontal) {
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  @if ($vertical) {
+    top: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+}
+
+@mixin abs-pos( $left: null, $top: null, $right: null, $bottom: null, $settingScale: null ) {
+  @if ($settingScale == null) {
+    $settingScale: $scale;
+  }
+
+  position: absolute;
+  top: if($top == null, auto, $top * $settingScale);
+  right: if($right == null, auto, $right * $settingScale);
+  bottom: if($bottom == null, auto, $bottom * $settingScale);
+  left: if($left == null, auto, $left * $settingScale);
+}
+
+@mixin set-animation($animation-name) {
+  -webkit-animation: $animation-name;
+  -moz-animation: $animation-name;
+  animation: $animation-name;
+}
+
+@mixin indent() {
+  text-indent: -1em;
+  padding-left: 1em;
+}
+
+@mixin text-style($size, $position) {
+  font-size: $size;
+  line-height: 1.5;
+
+  @if $position == left {
+    text-align: left;
+  } @else if $position == center {
+    text-align: center;
+  } @else if $position == right {
+    text-align: right;
+  }
+}
+
+@function get_vw($size, $viewport:375){
+  $rate: 100 / $viewport;
+  @return $rate * $size * 1vw;
+}
+
+@mixin fz_vw($font_size:10){
+  font-size: $font_size * 1px;
+  font-size: get_vw($font_size);
+}

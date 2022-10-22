@@ -1,0 +1,438 @@
+extends /event/2021/assets/common/pug/_Layout
+
+include /event/2021/assets/common/pug/_variable_regionals
+
+block pageState
+  -
+    if (build === undefined) {
+      var build = "mt";
+    }
+    var dateNow = '202210';
+    var pageState = {
+      updateTimeStamp: dateNow,
+      title: {
+        ja: `${gState.title[website]}`
+      },
+      description: {
+        ja: gState.description[website]
+      },
+      keywords: {
+        ja: gState.keywords[website]
+      },
+      url: {
+        ja: gState.websiteUrl
+      }
+    }
+
+block keywords
+  if (build === 'mt')
+    meta(name="keywords", content!=`<mt:Include module='キーワード'>`)
+  else
+    meta(name="keywords", content=pageState.keywords[website])
+
+block description
+  if (build === 'mt')
+    meta(name="description", content!=`<mt:Include module='ディスクリプション'>`)
+  else
+    meta(name="description", content=pageState.description[website])
+
+block ogurl
+  if (build === 'mt')
+    meta(property="og:url", content!=`<mt:BlogURL>`)
+  else
+    meta(property="og:url", content=gState.ogurl[website])
+
+block ogtitle
+  if (build === 'mt')
+    meta(property="og:title", content!=`<mt:Include module='タイトル'>`)
+  else
+    meta(property="og:title", content=pageState.title[website])
+
+block ogimg
+  if (build === 'mt')
+    meta(property="og:image", content!=`<mt:BlogURL>assets/common/img/ogp.png`)
+  else
+    meta(property="og:image", content=gState.ogImage[website])
+
+block ogdescription
+  if (build === 'mt')
+    meta(property="og:description", content!=`<mt:Include module='ディスクリプション'>`)
+  else
+    meta(property="og:description", content=pageState.description[website])
+
+block ogsitename
+  if (build === 'mt')
+    meta(property="og:site_name", content!=`<mt:Include module='タイトル'>`)
+  else
+    meta(property="og:site_name", content=gState.ogSiteName[website])
+
+block twittercard
+  meta(name="twitter:card", content="summary_large_image")
+  if (build === 'mt')
+    meta(name="twitter:image", content!=`<mt:BlogURL>assets/common/img/ogp.png`)
+  else
+    meta(name="twitter:image", content=gState.ogImage[website])
+
+block apptitle
+  if (build === 'mt')
+    meta(name="apple-mobile-web-app-title", content!=`<mt:Include module='iPhone用ショートタイトル'>`)
+  else
+    meta(name="apple-mobile-web-app-title", content=gState.apptitle[website])
+
+block title
+  if (build === 'mt')
+    title <mt:Include module='タイトル'>
+  else
+    title #{pageState.title[website]}
+
+block favicon
+  if (build === 'mt')
+    link(rel="shortcut icon", href!=`<mt:BlogURL>favicon.ico`)
+  else
+    link(rel="shortcut icon", href=`${gState.websiteDir[website]}favicon.ico`)
+
+block common_stylesheet
+  if (build === 'mt')
+    link(rel="stylesheet", media="screen and (min-width:737px)", href!=`<mt:BlogURL>assets/common/css/pc.css?${pageState.updateTimeStamp}`)
+    link(rel="stylesheet", media="screen and (max-width:736px)", href!=`<mt:BlogURL>assets/common/css/sp.css?${pageState.updateTimeStamp}`)
+  else
+    link(rel="stylesheet", media="screen and (min-width:737px)", href=`${gState.websiteDir[website]}assets/common/css/pc.css?${gState.updateTimeStamp}`)
+    link(rel="stylesheet", media="screen and (max-width:736px)", href=`${gState.websiteDir[website]}assets/common/css/sp.css?${gState.updateTimeStamp}`)
+
+block page_stylesheet
+  if (build === 'mt')
+    link(rel="stylesheet", media="screen and (min-width:737px)", href!=`<mt:BlogURL>assets/regionals/css/pc.css?${pageState.updateTimeStamp}`)
+    link(rel="stylesheet", media="screen and (max-width:736px)", href!=`<mt:BlogURL>assets/regionals/css/sp.css?${pageState.updateTimeStamp}`)
+  else
+    link(rel="stylesheet", media="screen and (min-width:737px)", href=`${gState.websiteDir[website]}assets/regionals/css/pc.css?${pageState.updateTimeStamp}`)
+    link(rel="stylesheet", media="screen and (max-width:736px)", href=`${gState.websiteDir[website]}assets/regionals/css/sp.css?${pageState.updateTimeStamp}`)
+
+block json-ld
+  if (build === 'mt')
+    script(type='application/ld+json').
+      [
+        {
+          "@context": "http://schema.org",
+          "@type": "WebSite",
+          "name": "<mt:Include module='タイトル'>",
+          "url": "<mt:BlogURL>"
+        },
+        {
+          "@context": "http://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@id": "<mt:BlogURL>",
+                "name": "<mt:Include module='タイトル'>"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@id": "<mt:BlogURL>regionals/",
+                "name": "<mt:Include module='タイトル'>"
+              }
+            }
+          ]
+        }
+      ]
+  else
+    script(type='application/ld+json').
+      [
+        {
+          "@context": "http://schema.org",
+          "@type": "WebSite",
+          "name": "#{gState.title[website]}",
+          "url": "#{gState.websiteUrl}#{gState.websiteDir[website]}"
+        },
+        {
+          "@context": "http://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "item": {
+                "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}",
+                "name": "#{gState.title[website]}"
+              }
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "item": {
+                "@id": "#{gState.websiteUrl}#{gState.websiteDir[website]}regionals/",
+                "name": "#{pageState.title[website]}"
+              }
+            }
+          ]
+        }
+      ]
+
+block header
+  if (build === 'mt')
+    <!--#include virtual="<mt:BlogRelativeURL>assets/common/inc/header.html" -->
+  else
+    <!--#include virtual="#{gState.websiteDir[website]}assets/common/inc/header.html" -->
+
+mixin navi()
+  li.anchor-nav__item
+    a.anchor-nav__link.js-tournament-btn(
+      href=`#${regionalsState.tournament_stage[website][x].id}`
+    ) !{regionalsState.tournament_stage[website][x].title}
+
+block main
+  main.main.page-regionals
+    .page-header
+      .page-header__inner
+        h1.page-header__title REGIONALS
+        if (build === 'mt')
+          <mt:if tag="BlogName" like="グランプリ">
+          <mt:SetVar name="descPrefix" value="地方予選大会結果">
+          <mt:else>
+          <mt:SetVar name="descPrefix" value="ブロック代表決定戦結果">
+          </mt:If>
+          p.page-header__lead <mt:GetVar name='descPrefix'>
+        else
+          p.page-header__lead Regional Results
+
+    if (build === 'mt')
+      .page-contents
+
+        ul.anchor-nav
+          <mt:Entries>
+          li.anchor-nav__item
+            a.anchor-nav__link.js-tournament-btn(class="", href!=`#<mt:If tag="anchor_link"><mt:anchor_link></mt:If>`) <mt:EntryTitle>
+          </mt:Entries>
+        <mt:Entries>
+        section.contents-section.js-eventResult(
+          id!="<mt:If tag='anchor_link'><mt:anchor_link></mt:If>",
+          data-qualified!="<mt:If tag='qualified_team'><mt:qualified_team></mt:If>",
+          data-displayed!="<mt:If tag='displayed_team'><mt:displayed_team></mt:If>",
+          data-ngname!="<mt:If tag='ng_name'><mt:ng_name></mt:If>",
+          data-ngnamepic!="<mt:If tag='ng_name_pic'><mt:ng_name_pic></mt:If>",
+          data-stageid!="<mt:If tag='stage1_id'><mt:stage1_id></mt:If><mt:If tag='stage2_id'>,<mt:stage2_id></mt:If>"
+        )
+          .contents-block
+            h3.contents-block__title <mt:EntryTitle>
+            .contents-block__inner
+              .contents-block__item
+                h4.regional-block__headline Winner
+                <mt:If tag="winner_a">
+                //- 2 teams
+                <mt:If tag="winner_b">
+                .regional-block__item
+                  p.regional-block__headline-sub Block A
+                  p.regional-block__text <mt:If tag='winner_a_namepic'><img src="<mt:winner_a_namepicAsset><mt:AssetURL></mt:winner_a_namepicAsset>"><mt:Else><mt:winner_a></mt:If>
+                  <mt:If tag='winner_a_pic'>
+                  .regional-block__img-wrap
+                    img.regional-block__img(src!="<mt:winner_a_picAsset><mt:AssetURL></mt:winner_a_picAsset>")
+                  </mt:If>
+                .regional-block__item
+                  p.regional-block__headline-sub Block B
+                  p.regional-block__text <mt:If tag='winner_b_namepic'><img src="<mt:winner_b_namepicAsset><mt:AssetURL></mt:winner_b_namepicAsset>"><mt:Else><mt:winner_b></mt:If>
+                  .regional-block__img-wrap
+                    img.regional-block__img(src!="<mt:winner_b_picAsset><mt:AssetURL></mt:winner_b_picAsset>")
+                //- 1 team
+                <mt:Else>
+                .regional-block__item
+                  p.regional-block__text <mt:If tag='winner_a_namepic'><img src="<mt:winner_a_namepicAsset><mt:AssetURL></mt:winner_a_namepicAsset>"><mt:Else><mt:winner_a></mt:If>
+                  <mt:If tag='winner_a_pic'>
+                  .regional-block__img-wrap
+                    img.regional-block__img(src!="<mt:winner_a_picAsset><mt:AssetURL></mt:winner_a_picAsset>")
+                  </mt:If>
+                </mt:If>
+                </mt:If>
+                //- No data
+                <mt:If tag="winner_a" eq="">
+                p.regional-block__text Coming soon
+                </mt:If>
+
+              .contents-block__item
+                h4.regional-block__headline 1st round result
+
+                .regional-results
+                  p.regional-results__title.js-accordion(class!="<mt:If name='__last__'>is-open</mt:If>") Tournament
+                  div.regional-results__block
+                    div.regional-results__inner
+                      .regional-block__bg
+                        .regional-results__tournament-thumb
+                        <mt:If tag='tournament_pic'>
+                          img(src!="<mt:tournament_picAsset><mt:AssetURL></mt:tournament_picAsset>")
+                        <mt:Else>
+                        <mt:If tag='text_for_update'>
+                          p.regional-block__text <mt:text_for_update>
+                        <mt:Else>
+                          p.regional-block__text Coming soon
+                        </mt:If>
+                        </mt:If>
+
+              .contents-block__item
+                h4.regional-block__headline 2nd round result
+
+                .regional-results
+                  p.regional-results__title.js-accordion(class!="<mt:If name='__last__'>is-open</mt:If>") Tier
+                  div.regional-results__block
+                    div.regional-results__inner.js-naviAndTables
+                    
+                      <mt:If tag='json_up'>
+                      ul.regional-resultsNavi
+                        li.regional-resultsNavi__item
+                          a.regional-resultsNavi__link.js-tournament-btn(
+                            class="",
+                            href="",
+                            data-tabIndex="2"
+                          ) Total
+                        li.regional-resultsNavi__item
+                          a.regional-resultsNavi__link.js-tournament-btn(
+                            class="",
+                            href="",
+                            data-tabIndex="0"
+                          ) Stage 1
+                        li.regional-resultsNavi__item
+                          a.regional-resultsNavi__link.js-tournament-btn(
+                            class="",
+                            href="",
+                            data-tabIndex="1"
+                          ) Stage 2
+
+                      //- stageName
+                      .regional-resultStName
+                        .regional-resultStName__item(data-stIndex="0")
+                          p.regional-resultStName__title Stage name
+                          p.regional-resultStName__text <mt:If tag='stage_name1'><mt:stage_name1></mt:If>
+                        .regional-resultStName__item(data-stIndex="1")
+                          p.regional-resultStName__title Stage name
+                          p.regional-resultStName__text <mt:If tag='stage_name2'><mt:stage_name2></mt:If>
+
+                      .regional-resultsTables.js-tableCloseContainer.js-tableToLoadJson
+
+                      //- No result Json
+                      <mt:Else>
+                      .regional-block__bg
+                        p.regional-block__text Coming soon
+                      </mt:If>
+        </mt:Entries>
+    else
+      .page-contents
+        ul.anchor-nav
+          - for (var x = 0; x < regionalsState.tournament_stage[website].length; x++)
+            if regionalsState.tournament_stage[website][x].isShow
+              +navi()
+
+        - for (var x = 0; x < regionalsState.tournament_stage[website].length; x++)
+          if regionalsState.tournament_stage[website][x].isShow
+            section.contents-section.js-eventResult(
+              id=`${regionalsState.tournament_stage[website][x].id}`,
+              data-qualified=`${regionalsState.tournament_stage[website][x].qualified}`,
+              data-displayed=`${regionalsState.tournament_stage[website][x].displayed}`,
+              data-ngname!=`${regionalsState.tournament_stage[website][x].replaceText}`,
+              data-ngnamepic!=`${regionalsState.tournament_stage[website][x].replacePic}`,
+              data-stageid!=`${regionalsState.tournament_stage[website][x].stageid}`
+            )
+              .contents-block
+                h3.contents-block__title !{regionalsState.tournament_stage[website][x].title}
+                .contents-block__inner
+                  .contents-block__item
+                    h4.regional-block__headline Winner
+                    //- 2 teams
+                    if regionalsState.tournament_stage[website][x].winnerA && regionalsState.tournament_stage[website][x].winnerB
+                      .regional-block__item
+                        p.regional-block__headline-sub Block A
+                        p.regional-block__text !{regionalsState.tournament_stage[website][x].winnerA}
+                        if regionalsState.tournament_stage[website][x].winnerApic
+                          .regional-block__img-wrap 
+                            img.regional-block__img(src=`${regionalsState.tournament_stage[website][x].winnerApic}`)
+                      .regional-block__item
+                        p.regional-block__headline-sub Block B
+                        p.regional-block__text !{regionalsState.tournament_stage[website][x].winnerB}
+                        if regionalsState.tournament_stage[website][x].winnerBpic
+                          .regional-block__img-wrap 
+                            img.regional-block__img(src=`${regionalsState.tournament_stage[website][x].winnerBpic}`)
+                    //- 1 team
+                    else if regionalsState.tournament_stage[website][x].winnerA && !regionalsState.tournament_stage[website][x].winnerB
+                      .regional-block__item
+                        p.regional-block__text !{regionalsState.tournament_stage[website][x].winnerA}
+                        if regionalsState.tournament_stage[website][x].winnerApic
+                          .regional-block__img-wrap 
+                            img.regional-block__img(src=`${regionalsState.tournament_stage[website][x].winnerApic}`)
+                    //- No data
+                    else
+                      .regional-block__item
+                        p.regional-block__text Coming soon
+
+                  .contents-block__item
+                    h4.regional-block__headline 1st round result
+                    .regional-results
+                      p.regional-results__title.js-accordion(class= x == 0 ? 'is-open' : '') Tournament
+                      div.regional-results__block
+                        div.regional-results__inner
+                          .regional-block__bg
+                            if regionalsState.tournament_stage[website][x].tournamentImg
+                              .regional-results__tournament-thumb
+                                img(src=`${regionalsState.tournament_stage[website][x].tournamentImg}`)
+                            else
+                              if regionalsState.tournament_stage[website][x].textForUpdate
+                                p.regional-block__text !{regionalsState.tournament_stage[website][x].textForUpdate}
+                              else
+                                p.regional-block__text Coming soon
+
+                  .contents-block__item
+                    h4.regional-block__headline 2nd round result
+                    .regional-results
+                      p.regional-results__title.js-accordion(class= x == 0 ? 'is-open' : '') Tier
+                      div.regional-results__block
+                        div.regional-results__inner.js-naviAndTables
+
+                          if regionalsState.tournament_stage[website][x].results
+                            ul.regional-resultsNavi
+                              li.regional-resultsNavi__item
+                                a.regional-resultsNavi__link.js-tournament-btn(
+                                  class="",
+                                  href="",
+                                  data-tabIndex="2"
+                                ) Total
+                              li.regional-resultsNavi__item
+                                a.regional-resultsNavi__link.js-tournament-btn(
+                                  class="",
+                                  href="",
+                                  data-tabIndex="0"
+                                ) Stage 1
+                              li.regional-resultsNavi__item
+                                a.regional-resultsNavi__link.js-tournament-btn(
+                                  class="",
+                                  href="",
+                                  data-tabIndex="1"
+                                ) Stage 2
+
+                            //- stageName
+                            if regionalsState.tournament_stage[website][x].stageName1
+                              .regional-resultStName
+                                .regional-resultStName__item(data-stIndex="0")
+                                  p.regional-resultStName__title Stage name
+                                  p.regional-resultStName__text #{regionalsState.tournament_stage[website][x].stageName1}
+                                .regional-resultStName__item(data-stIndex="1")
+                                  p.regional-resultStName__title Stage name
+                                  p.regional-resultStName__text #{regionalsState.tournament_stage[website][x].stageName2}
+
+                            .regional-resultsTables.js-tableCloseContainer.js-tableToLoadJson
+
+                          else
+                            .regional-block__bg
+                              p.regional-block__text Coming soon
+
+block footer
+  if (build === 'mt')
+    <!--#include virtual="<mt:BlogRelativeURL>assets/common/inc/footer.html" -->
+  else
+    <!--#include virtual="#{gState.websiteDir[website]}assets/common/inc/footer.html" -->
+
+block page_script_bottom
+  if (build === 'mt')
+    script(src!=`<mt:BlogURL>assets/regionals/js/bundle.js?${pageState.updateTimeStamp}`)
+  else
+    script(src=`${gState.websiteDir[website]}assets/regionals/js/bundle.js?${pageState.updateTimeStamp}`)
