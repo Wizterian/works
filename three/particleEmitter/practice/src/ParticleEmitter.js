@@ -7,12 +7,12 @@ import Particle from './Particle';
 
 export default class ParticleEmitter extends Object3D {
   constructor() {
-    console.log('ParticleEmitter');
     super();
-    this._particleNum = 1;
-    this._particleMaxNum = 1;
+    this._particleAddNum = 1;
+    this._particleMaxNum = 110;
     this._radius = 5;
     this._angle = 0;
+    this._colorList = [0x88ffcc, 0xccffcc, 0x33ffcc];
     const loader = new TextureLoader();
 
     // texture
@@ -30,21 +30,25 @@ export default class ParticleEmitter extends Object3D {
     const items = this.children;
     // particleを並べる
     items.forEach((particle, index) => {
-      // Particleの位置設定
-      particle.init(this._radius, this._angle);
+      if (particle.isAlive) {
+        // particleを再生
+        particle.update();
+      } else {
+        // particleを巻き戻し
+        particle.init(this._radius, this._angle);
+      }
     })
 
-    // maxNumまで10個づつ追加
+    // 最大生成数に達するまでn個づつ追加
     if (this.children.length < this._particleMaxNum) {
-      for (let i = 0; i < 10; i++) this._addParticle();
+      for (let i = 0; i < this._particleAddNum; i++) this._addParticle();
     }
   }
 
   _addParticle() {
     if (!this._texture) return;
-
-    const particle = new Particle(this._texture);
-    particle.visible = false;
+    const color = this._colorList[Math.floor(Math.random() * 3)]
+    const particle = new Particle(this._texture, color);
     this.add(particle);
   }
 }
@@ -53,6 +57,10 @@ export default class ParticleEmitter extends Object3D {
 // emitterからparticleをaddする
 // particleをmaxNumまで生成
 // particleを円柱に並べる
-// --- 済み
 // isAliveでinitかupdate切り替え
-
+// particle個別の動き
+// 生成数を増やす
+// 不要 particleずらし
+// --- 済み
+// lifeと発生個数のバランス取る
+// bufferGeometryでやる

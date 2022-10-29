@@ -49,8 +49,7 @@ export default class ParticleEmitter extends Object3D {
       } else { // 死んでいれば
         particle.init( // particleの位置リセット
           this._radius,
-          // (角度 7倍数) - (7 / 死んだパーティクル数) * パーティクル再生数
-          // ずらしておいていく？
+          // (角度 7倍数) - (7 / 死んだパーティクル数) * パーティクル再生数 ずらしておいていく？
           // this._angle - (incrementNumber / notAliveNum) * initNum
           this._angle
         );

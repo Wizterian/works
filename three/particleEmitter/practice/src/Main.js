@@ -10,8 +10,6 @@ import ParticleEmitter from './ParticleEmitter';
 
 export default class Main {
   constructor() {
-    console.log('Main');
-
     // scene, camera, renderer
     this._scene = new Scene();
     this._camera = new Camera();
