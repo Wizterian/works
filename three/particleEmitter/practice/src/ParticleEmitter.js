@@ -10,7 +10,7 @@ export default class ParticleEmitter extends Object3D {
   constructor() {
     super();
     this._pEmitNum = 3; // Particle number to put in one frame
-    this._pMaxNum = 500; // Max particle number to generate
+    this._pMaxNum = 400; // Max particle number to generate
     this._radius = 5;
     this._angle = 0;
     this._colorList = [0x99ffcc, 0xccff99, 0xffffde];
@@ -26,15 +26,15 @@ export default class ParticleEmitter extends Object3D {
     if (!this._texture) return;
 
     // Framerate adjustment when the fps changes
-    const timeRatio = TimerModel.getInstance().getTimeRatio();
+    const timeScale = TimerModel.getInstance().getTimeRatio();
 
     // Angle to add in one frame
-    const angleIncrement = 8 * timeRatio;
+    const angleIncrement = 8 * timeScale;
     this._angle += angleIncrement;
 
     // Max particle number when the fps changes
-    const tmpMaxNum = this._pMaxNum * (1 / timeRatio);
-    const tmpEmitNum = this._pEmitNum * timeRatio;
+    const tmpMaxNum = this._pMaxNum * (1 / timeScale);
+    const tmpEmitNum = this._pEmitNum * timeScale;
 
     // Particle actions
     const items = this.children;
