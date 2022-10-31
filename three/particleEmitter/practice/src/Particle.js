@@ -46,7 +46,7 @@ export default class Particle extends Sprite {
     this.material.opacity = 1;
     this.isAlive = true;
     this.visible = true;
-    this._lifePoint = 50 * (1 / TimerModel.getInstance().getTimeRatio());
+    this._lifePoint = 80 * (1 / TimerModel.getInstance().getTimeRatio());
   }
 
   update() {

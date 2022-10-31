@@ -9,8 +9,8 @@ import {TimerModel} from './Main';
 export default class ParticleEmitter extends Object3D {
   constructor() {
     super();
-    this._pEmitNum = 2; // Number to put particles in one frame
-    this._pMaxNum = 100; // Max particle number to generate
+    this._pEmitNum = 3; // Particle number to put in one frame
+    this._pMaxNum = 500; // Max particle number to generate
     this._radius = 5;
     this._angle = 0;
     this._colorList = [0x99ffcc, 0xccff99, 0xffffde];
@@ -25,7 +25,7 @@ export default class ParticleEmitter extends Object3D {
   update() {
     if (!this._texture) return;
 
-    // Speed adjustment when the fps changes
+    // Framerate adjustment when the fps changes
     const timeRatio = TimerModel.getInstance().getTimeRatio();
 
     // Angle to add in one frame
@@ -34,6 +34,7 @@ export default class ParticleEmitter extends Object3D {
 
     // Max particle number when the fps changes
     const tmpMaxNum = this._pMaxNum * (1 / timeRatio);
+    const tmpEmitNum = this._pEmitNum * timeRatio;
 
     // Particle actions
     const items = this.children;
@@ -47,15 +48,15 @@ export default class ParticleEmitter extends Object3D {
         particle.init(
           this._radius,
           // Particle delay
-          this._angle - ((angleIncrement / this._pEmitNum) * pEmitIndex)
+          this._angle - ((angleIncrement / tmpEmitNum) * pEmitIndex)
         );
         pEmitIndex += 1;
       }
     })
 
-    // Additional particles until reaching to the maximum
+    // Additional particles until reaching to the maximum number
     if (this.children.length < tmpMaxNum) {
-      for (let i = 0; i < this._pEmitNum; i++) {
+      for (let i = 0; i < tmpEmitNum; i++) {
         this._addParticle();
       }
     }
