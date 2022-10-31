@@ -5,9 +5,10 @@ import {
   Texture,
   Vector3,
 } from 'three';
+import { TimerModel } from './Main';
 
 export default class Particle extends Sprite {
-  constructor(texture, color = 0x88ccff) {
+  constructor(texture, color = 0xffffff) {
     super(
       new SpriteMaterial({
         color: color,
@@ -19,21 +20,22 @@ export default class Particle extends Sprite {
   }
 
   init(radius, angle) {
-    // 現在の排出座標に設定
+    // Position
     const rad = (angle * Math.PI) / 180;
     this.position.set(
       5 * Math.sin(rad * .3),
       radius * Math.sin(rad),
-      radius * Math.cos(rad),
+      radius * Math.cos(rad)
     );
-    
-    // 拡散
+
+    // Direction to go
     this._pVector = new Vector3(
       Math.random() * (-0.06 - 0.06) + 0.06,
       Math.random() * (0.03 - 0.06) + 0.06,
       Math.random() * (-0.06 - 0.06) + 0.06
     );
-    // スケール
+
+    // Scale
     this._pScale = Math.random() * 1.5 + 0.5;
     this.scale.set(
       this._pScale,
@@ -43,12 +45,14 @@ export default class Particle extends Sprite {
 
     this.material.opacity = 1;
     this.isAlive = true;
-    this._lifePoint = 120; // (Math.random() * 120 - 60) + 60;
+    this.visible = true;
+    this._lifePoint = 50 * (1 / TimerModel.getInstance().getTimeRatio());
   }
 
-  update() { // 4Kには要timeScale
+  update() {
+    const timeScale = TimerModel.getInstance().getTimeRatio();
     this._lifePoint -= 1;
-    this.position.add(this._pVector);
+    this.position.add(this._pVector.clone().multiplyScalar(timeScale));
     this.material.opacity -= 1 / this._lifePoint;
     if(0 >= this._lifePoint) this.isAlive = false;
   }

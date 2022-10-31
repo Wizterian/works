@@ -29,8 +29,14 @@ export default class Main {
     const axisHelper = new AxesHelper(5);
     this._scene.add(gridHelper, axisHelper);
 
+    // Stats
+    this._stats = new Stats();
+    document.body.appendChild(this._stats.dom);
+
     // update
-    window.addEventListener('resize', (event) => this._onResize(event));
+    this.currentTime = 0;
+    this.timeRatio = 1;
+    window.addEventListener('resize', event => {this._resize()});
     this._tick();
   }
 
@@ -39,12 +45,13 @@ export default class Main {
     this._camera.rotate();
     this._camera.update();
 
+    TimerModel.getInstance().updateTimeRatio();
     this._particleEmitter.update();
 
+    this._stats.begin();
     this._renderer.render(this._scene, this._camera);
+    this._stats.end();
   }
-
-  _onResize(event) {this._resize()};
 
   _resize() {
     const width = this._renderDom.clientWidth;
@@ -67,7 +74,7 @@ class Camera extends PerspectiveCamera {
   }
 
   rotate() {
-    this._angle -= 0.1;
+    this._angle -= 0.1 * TimerModel.getInstance().getTimeRatio();
   }
 
   update() {
@@ -75,5 +82,29 @@ class Camera extends PerspectiveCamera {
     this.position.x = this._radius * Math.sin(lad);
     this.position.z = this._radius * Math.cos(lad);
     this.lookAt(new Vector3(0, 1.5, 0));
+  }
+}
+
+export class TimerModel {  
+  constructor() {
+    this._currentTime = 0;
+    this._timeRatio = 1;
+    TimerModel._instance = this;
+  }
+
+  static getInstance() {
+    return TimerModel._instance || new TimerModel();
+  }
+
+  getTimeRatio() {
+    return this._timeRatio;
+  }
+
+  updateTimeRatio() {
+    const lastTime = this._currentTime;
+    const fps60 = 1000 / 60;
+    const timeDiff = new Date().getTime() - lastTime;
+    this._timeRatio = Math.round((timeDiff / fps60 * 10) / 10) >= 2 ? 2 : 1;
+    this._currentTime = new Date().getTime();
   }
 }
