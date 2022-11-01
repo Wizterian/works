@@ -66,18 +66,19 @@ class Camera extends THREE.PerspectiveCamera {
   }
 
   rotate() {
-    this._angle -= 0.1 * TimerModel.getInstance().getTimeRatio();
+    this._angle += 0.1 * TimerModel.getInstance().getTimeRatio();
   }
 
   update() {
     const lad = (this._angle * Math.PI) / 180;
     this.position.x = this._radius * Math.sin(lad);
+    this.position.y = (this._radius / 10) * Math.cos(lad * 4) + (this._radius / 4);
     this.position.z = this._radius * Math.cos(lad);
     this.lookAt(new THREE.Vector3(0, 1.5, 0));
   }
 }
 
-export class TimerModel {  
+class TimerModel {  
   constructor() {
     this._currentTime = 0;
     this._timeRatio = 1;
@@ -112,7 +113,7 @@ class ParticleEmitter extends THREE.Object3D {
     const loader = new THREE.TextureLoader();
 
     // texture
-    loader.load('./particle.png', (texture) => {
+    loader.load(document.querySelector("#pImg").src, (texture) => {
       this._texture = texture;
     });
   }
@@ -208,7 +209,7 @@ class Particle extends THREE.Sprite {
     this._lifePoint = 80 * (1 / TimerModel.getInstance().getTimeRatio());
   }
 
-  // Particle moves until it's life lasts
+  // Particle moves until it's life ends
   update() {
     const timeScale = TimerModel.getInstance().getTimeRatio();
     this._lifePoint -= 1;
@@ -217,3 +218,10 @@ class Particle extends THREE.Sprite {
     if(0 >= this._lifePoint) this.isAlive = false;
   }
 }
+
+// cdnない stats.jsをcdnに
+// --- 済み
+// codepen用に画像を外部に置く
+//  https://codepen.io/hisamikurita/pen/JjJpKdZ?editors=0010
+//  https://note.com/siouxcitizen/n/n7e6ab421a17f
+// bufferGeometry + shaderでやる

@@ -70,6 +70,3 @@ export default class ParticleEmitter extends Object3D {
     this.add(particle);
   }
 }
-
-// --- 済み
-// bufferGeometry + shaderでやる
