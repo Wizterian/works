@@ -217,10 +217,3 @@ class Particle extends THREE.Sprite {
     if(0 >= this._lifePoint) this.isAlive = false;
   }
 }
-
-// cdnない stats.jsをcdnに
-// --- 済み
-// codepen用に画像を外部に置く
-//  https://codepen.io/hisamikurita/pen/JjJpKdZ?editors=0010
-//  https://note.com/siouxcitizen/n/n7e6ab421a17f
-// bufferGeometry + shaderでやる
