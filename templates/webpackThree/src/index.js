@@ -1,10 +1,9 @@
-
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import { hello } from "./sub";
 hello();
 
-export default class threeApp {
+export default class ThreeApp {
   constructor(options) {
     this.container = options.container;
     this.width = this.container.offsetWidth;
@@ -19,10 +18,18 @@ export default class threeApp {
     this.container.appendChild(this.renderer.domElement);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-    this.resize();
-    this.setup();
-    this.render();
     window.addEventListener('resize', this.resize.bind(this));
+  }
+
+  load() {
+    const pathArray = [
+      './vertex.glsl',
+      './fragment.glsl'
+    ]
+    const shaders = pathArray.map((path) => {
+      return fetch(path).then((response) => {return response.text()});
+    })
+    return Promise.all(shaders);
   }
 
   resize() {
@@ -33,20 +40,12 @@ export default class threeApp {
     this.camera.updateProjectionMatrix();
   }
 
-  setup() {
+  setup(shaders) {
     this.geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
     this.material = new THREE.MeshNormalMaterial();
     this.material = new THREE.ShaderMaterial({
-      fragmentShader: `
-        void main() {
-          gl_FragColor = vec4(1., 0., 0., 1.);
-        }
-      `,
-      vertexShader: `
-        void main() {
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.);
-        }
-      `
+      fragmentShader: shaders[1],
+      vertexShader: shaders[0]
     });
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -64,4 +63,10 @@ export default class threeApp {
   }
 }
 
-new threeApp({container: document.getElementById('container')});
+const App = new ThreeApp({container: document.getElementById('container')});
+App.load()
+.then(shaders => {
+  App.resize();
+  App.setup(shaders);
+  App.render();
+});
