@@ -31,18 +31,15 @@ export default class ThreeApp {
         .then(response => response.text())
         .then(response => this.loadedShaders.push(response));
     });
-
+  
     const imgPaths = ['./thumb1.jpg', './thumb2.jpg'];
     const imgPathRes = imgPaths.map(path => {
       return new Promise(resolve => {
-        const img = new Image();
-        img.addEventListener('load', () => {
-          this.loadedImages.push(img.src);
-          resolve(img);
-        });
-        img.src = path;
+        this.loadedImages.push(new THREE.TextureLoader().load(path));
+        resolve(this.loadedImages);
       })
-    })
+    });
+
     return Promise.all(shaderPathsRes, imgPathRes);
   }
 
@@ -55,16 +52,17 @@ export default class ThreeApp {
   }
 
   setup() {
-    this.geometry = new THREE.PlaneGeometry(1, 1, 150, 150);
+    // this.geometry = new THREE.PlaneGeometry(1, 1, 50, 50);
+    this.geometry = new THREE.SphereGeometry(1, 50, 50);
     this.material = new THREE.MeshNormalMaterial();
     this.material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
-      // wireframe: true,
+      wireframe: true,
       vertexShader: this.loadedShaders[0],
       fragmentShader: this.loadedShaders[1],
       uniforms: {
         time: {value: 0},
-        oceanTexture: {value: new THREE.TextureLoader().load(this.loadedImages[0])}
+        oceanTexture: {value: this.loadedImages[0]}
       }
     });
 
