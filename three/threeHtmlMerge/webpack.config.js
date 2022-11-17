@@ -1,13 +1,17 @@
+const path = require("path");
+
 module.exports = {
   // メインとなるJavaScriptファイル（エントリーポイント）
-  entry: `./src/index.js`,
+  context: path.join(__dirname, "src/js"),
+  entry: `./index.js`,
   mode: "development",
   // ファイルの出力設定
   output: {
     //  出力ファイルのディレクトリ名
-    path: `${__dirname}/dist`,
+    path: path.join(__dirname, "dist/js"),
     // 出力ファイル名
-    filename: "main.js"
+    filename: "./main.js",
+    publicPath: "/js/"
   },
   devServer: {
     static: "dist",

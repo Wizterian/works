@@ -25,14 +25,14 @@ export default class ThreeApp {
   }
 
   load() {
-    const shaderPaths = ['./vertex.glsl', './fragment.glsl'];
+    const shaderPaths = ['./js/vertex.glsl', './js/fragment.glsl'];
     const shaderPathsRes = shaderPaths.map((path) => {
       return fetch(path)
         .then(response => response.text())
         .then(response => this.loadedShaders.push(response));
     });
   
-    const imgPaths = ['./thumb1.jpg', './thumb2.jpg'];
+    const imgPaths = ['../img/thumb1.jpg', '../img/thumb2.jpg'];
     const imgPathRes = imgPaths.map(path => {
       return new Promise(resolve => {
         this.loadedImages.push(new THREE.TextureLoader().load(path));
@@ -52,6 +52,7 @@ export default class ThreeApp {
   }
 
   setup() {
+    console.log(this.loadedImages);
     // this.geometry = new THREE.PlaneGeometry(1, 1, 50, 50);
     this.geometry = new THREE.SphereGeometry(1, 50, 50);
     this.material = new THREE.MeshNormalMaterial();
