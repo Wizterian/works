@@ -34,11 +34,10 @@ class WebGLApp {
   resize() {
     this.canvas.width  = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    this.fittingRatio = {
+    this.ratioToFit = {
       x: Math.min(this.canvas.width / this.canvas.height, 1.0),
       y: Math.min(this.canvas.height / this.canvas.width, 1.0),
     }
-    console.log(this.fittingRatio);
   }
   
   load() {
@@ -68,16 +67,14 @@ class WebGLApp {
         this.attStride = [3, 3];
         // Uniforms
         this.uniLocation = [
-          this.gl.getUniformLocation(this.program, 'mMatrix'),
+          this.gl.getUniformLocation(this.program, 'mvpMatrix'),
           this.gl.getUniformLocation(this.program, 'time'),
-          this.gl.getUniformLocation(this.program, 'resolution'),
           this.gl.getUniformLocation(this.program, 'color'),
           this.gl.getUniformLocation(this.program, 'strength'),
         ];
         this.uniType = [
           'uniformMatrix4fv',
           'uniform1f',
-          'uniform2fv',
           'uniform4fv',
           'uniform1f',
         ];
@@ -87,7 +84,7 @@ class WebGLApp {
   }
 
   setup() {
-    // Vertecies Config
+    // Vertex Config
     let vertexCount = 97;
     this.positionsA = []; // Circle
     this.positionsB = []; // Square
@@ -138,7 +135,7 @@ class WebGLApp {
     // Render Config
     this.gl.clearColor(.1, .1, .1, 1);
     this.gl.clearDepth(1);
-    
+
     this.gl.enable(this.gl.DEPTH_TEST);
 
     // this.gl.enable(this.gl.BLEND);
@@ -199,37 +196,54 @@ class WebGLApp {
       this.mMatrix = Mat4.rotate(
         this.mMatrix,
         Math.cos(timeA / 3) * 3,
-        Vec3.create(0.0, 1.0, 1.0),
+        new Float32Array([0.0, 1.0, 1.0]),
         this.mMatrix
       );
 
       // Mix Strength
       const mixStrength = (Math.cos(timeA * .4) * .5) + .5;
 
-      // Scaling
-      const sizeScale = this.geoSize - (this.geoSize / this.geoRepeat * i);
-      this.mMatrix = Mat4.scale(this.mMatrix, Vec3.create(sizeScale, sizeScale, sizeScale), this.mMatrix);
-
       // Rotation B
       this.mMatrix = Mat4.rotate(
         this.mMatrix,
         Math.sin(this.currentTime * .25),
-        Vec3.create(1.0, 0.0, 1.0),
+        new Float32Array([1.0, 1.0, 0.0]),
         this.mMatrix
       );
 
-      // Aspect Adjustment
+      // Copy
+      const sizeScale = this.geoSize - (this.geoSize / this.geoRepeat * i);
       this.mMatrix = Mat4.scale(
         this.mMatrix,
-        Vec3.create(this.fittingRatio.x, this.fittingRatio.y, 1.0),
+        new Float32Array([
+          sizeScale,
+          sizeScale,
+          sizeScale
+        ]),
         this.mMatrix
       );
+
+      // Aspect Tweak
+      this.mMatrix = Mat4.scale(
+        this.mMatrix,
+        new Float32Array([
+          this.ratioToFit.y,
+          this.ratioToFit.x,
+          1.0
+        ]),
+        this.mMatrix
+      );
+      // this.mvpMatrix = Mat4.multiply(this.vpMatrix, this.mMatrix)
+      // this.mvpMatrix = Mat4.scale(
+      //   this.mvpMatrix,
+      //   Vec3.create(this.ratioToFit.x, this.ratioToFit.y, 1.0),
+      //   this.mvpMatrix
+      // );
 
       // Uniform Transfer
       this.setUniform([
-        this.mMatrix, // Mat4.multiply(this.vpMatrix, this.mMatrix), // 
+        this.mMatrix, // this.mvpMatrix, // 
         this.currentTime,
-        [window.innerWidth, window.innerHeight], // resolution
         [
           this.colors[i * COLOR_STRIDE + 0],
           this.colors[i * COLOR_STRIDE + 1],
@@ -369,56 +383,6 @@ class WebGLApp {
 /*************************************************
 Math Classes
 *************************************************/
-
-class Vec3 {
-  // 3つの要素を持つベクトルを生成する
-  static create(x = 0, y = 0, z = 0) {
-    const out = new Float32Array(3);
-    out[0] = x;
-    out[1] = y;
-    out[2] = z;
-    return out;
-  }
-  // ベクトルの長さ（大きさ）を返す
-  static length(v) {
-    return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-  }
-  // 正規化したベクトルを結果を返す
-  static normalize(v) {
-    const n = Vec3.create();
-    const l = Vec3.length(v);
-    if (l > 0) {
-      const i = 1 / l;
-      n[0] = v[0] * i;
-      n[1] = v[1] * i;
-      n[2] = v[2] * i;
-    }
-    return n;
-  }
-  // 2つのベクトルの内積の結果を返す
-  static dot(v0, v1) {
-    return v0[0] * v1[0] + v0[1] * v1[1] + v0[2] * v1[2];
-  }
-  // 2つのベクトルの外積の結果を返す
-  static cross(v0, v1) {
-    return Vec3.create(
-      v0[1] * v1[2] - v0[2] * v1[1],
-      v0[2] * v1[0] - v0[0] * v1[2],
-      v0[0] * v1[1] - v0[1] * v1[0],
-    );
-  }
-  // 3つのベクトルから面法線を求めて返す
-  static faceNormal(v0, v1, v2) {
-    const vec0 = Vec3.create(v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]);
-    const vec1 = Vec3.create(v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]);
-    const n = Vec3.create(
-      vec0[1] * vec1[2] - vec0[2] * vec1[1],
-      vec0[2] * vec1[0] - vec0[0] * vec1[2],
-      vec0[0] * vec1[1] - vec0[1] * vec1[0],
-    );
-    return Vec3.normalize(n);
-  }
-}
 
 class Mat4 {
   static create() {
@@ -868,4 +832,11 @@ window.addEventListener('DOMContentLoaded', () => {
 jsでアスペクト比出す
 mat4.scaleでmodelMarixを変形
 
+もしモデル座標変換だけでどうにかするのであれば、Mat4.scale というメソッドがあるので、それで横幅や縦幅をアスペクト比に応じて変化させてみるとどうでしょうか？（その場合 z に対しては 1.0 が掛かるようにして値が変化しないようにする）
+
+念のために補足すると、もし可能なのであればビュー・プロジェクション行列を使って MVP 行列で処理するようにしたほうが将来的な拡張性や安全性は高いような気がします。
+たとえばモデル座標変換だけを適用しているということは、奥行きの範囲が -1.0～1.0 を越えてしまうと頂点が描画されなくなり消失したように見えてしまうと思うんですよね。
+こういうのは、プロジェクション行列の near と far でその広さを広げることができたりするので、結果的に汎用性が高まるというか、いろんなケースに応用しやすくはなると思います。
+
+ただその場合、perspective なプロジェクション行列では奥行きに応じたパースが掛かり見た目の印象が変化してしまう可能性もあるので、その場合は平行投影を使ったほうがいいと思います！（Mat4.ortho を使う）
 */
