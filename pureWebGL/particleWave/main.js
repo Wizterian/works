@@ -158,6 +158,8 @@ class WebGLApp {
 
     // Program Select
     this.gl.useProgram(this.program);
+
+    // Geometry Select
     this.setAttribute(this.vbo, this.attLocation, this.attStride);
 
     // Camera Config
@@ -173,12 +175,12 @@ class WebGLApp {
     const top    =  1;
     const bottom = -1;
 
-    // ビュー・プロジェクション座標変換行列
+    // Projection & View Matrix
     this.vMatrix  = Mat4.lookAt(cameraPosition, centerPoint, cameraUpDirection);
-    // this.pMatrix  = Mat4.perspective(fovy, aspect, near, far); // 遠近法
-    this.pMatrix  = Mat4.ortho(left, right, top, bottom, near, far); // 平行投影法
+    // this.pMatrix  = Mat4.perspective(fovy, aspect, near, far); // Perspective
+    this.pMatrix  = Mat4.ortho(left, right, top, bottom, near, far); // Ortho
     this.vpMatrix = Mat4.multiply(this.pMatrix, this.vMatrix);
-    // カメラのパラメータ類を更新し行列に効果を与える
+    // Camera Motion Update
     this.camera.update();
     let quaternionMatrix = Mat4.identity(Mat4.create());
     quaternionMatrix = Qtn4.toMatIV(this.camera.qtn, quaternionMatrix);
@@ -200,7 +202,7 @@ class WebGLApp {
         this.mMatrix
       );
 
-      // Mix Strength
+      // Mix Strength using "TimeA"
       const mixStrength = (Math.cos(timeA * .4) * .5) + .5;
 
       // Rotation B
@@ -224,25 +226,20 @@ class WebGLApp {
       );
 
       // Aspect Tweak
-      this.mMatrix = Mat4.scale(
-        this.mMatrix,
+      this.mvpMatrix = Mat4.multiply(this.vpMatrix, this.mMatrix);
+      this.mvpMatrix = Mat4.scale(
+        this.mvpMatrix,
         new Float32Array([
-          this.ratioToFit.y,
-          this.ratioToFit.x,
+          this.ratioToFit.y * 2,
+          this.ratioToFit.x * 2,
           1.0
         ]),
-        this.mMatrix
+        this.mvpMatrix
       );
-      // this.mvpMatrix = Mat4.multiply(this.vpMatrix, this.mMatrix)
-      // this.mvpMatrix = Mat4.scale(
-      //   this.mvpMatrix,
-      //   Vec3.create(this.ratioToFit.x, this.ratioToFit.y, 1.0),
-      //   this.mvpMatrix
-      // );
 
       // Uniform Transfer
       this.setUniform([
-        this.mMatrix, // this.mvpMatrix, // 
+        this.mvpMatrix,
         this.currentTime,
         [
           this.colors[i * COLOR_STRIDE + 0],
@@ -827,16 +824,3 @@ window.addEventListener('DOMContentLoaded', () => {
     webgl.render();
   });
 })
-
-/** 
-jsでアスペクト比出す
-mat4.scaleでmodelMarixを変形
-
-もしモデル座標変換だけでどうにかするのであれば、Mat4.scale というメソッドがあるので、それで横幅や縦幅をアスペクト比に応じて変化させてみるとどうでしょうか？（その場合 z に対しては 1.0 が掛かるようにして値が変化しないようにする）
-
-念のために補足すると、もし可能なのであればビュー・プロジェクション行列を使って MVP 行列で処理するようにしたほうが将来的な拡張性や安全性は高いような気がします。
-たとえばモデル座標変換だけを適用しているということは、奥行きの範囲が -1.0～1.0 を越えてしまうと頂点が描画されなくなり消失したように見えてしまうと思うんですよね。
-こういうのは、プロジェクション行列の near と far でその広さを広げることができたりするので、結果的に汎用性が高まるというか、いろんなケースに応用しやすくはなると思います。
-
-ただその場合、perspective なプロジェクション行列では奥行きに応じたパースが掛かり見た目の印象が変化してしまう可能性もあるので、その場合は平行投影を使ったほうがいいと思います！（Mat4.ortho を使う）
-*/
