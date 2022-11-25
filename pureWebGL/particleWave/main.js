@@ -9,6 +9,7 @@ class WebGLApp {
     this.render    = this.render.bind(this);
 
     this.mMatrix   = Mat4.identity(Mat4.create());
+    this.resize = this.resize.bind(this);
   }
 
   init(canvas) {
@@ -23,8 +24,23 @@ class WebGLApp {
     if (this.canvas == null) {throw new Error('invalid argument');}
     this.gl = this.canvas.getContext('webgl');
     if (this.gl == null) {throw new Error('webgl not supported');}
+
+    // Resize
+    this.resize();
+    window.addEventListener('resize', this.resize, false);
   }
 
+  // Resize
+  resize() {
+    this.canvas.width  = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.fittingRatio = {
+      x: Math.min(this.canvas.width / this.canvas.height, 1.0),
+      y: Math.min(this.canvas.height / this.canvas.width, 1.0),
+    }
+    console.log(this.fittingRatio);
+  }
+  
   load() {
     this.program     = null;
     this.attLocation = null;
@@ -44,27 +60,26 @@ class WebGLApp {
           this.gl.FRAGMENT_SHADER
         );
         this.program = this.createProgram(vs, fs);
-        // attributeに変更・追加があれば修正
+        // Attributes
         this.attLocation = [
-          this.gl.getAttribLocation(this.program, 'position'),
+          this.gl.getAttribLocation(this.program, 'positionA'),
+          this.gl.getAttribLocation(this.program, 'positionB'),
         ];
-        // attributeに変更・追加があれば修正
-        this.attStride = [3];
-        // uniformに変更・追加があれば修正
+        this.attStride = [3, 3];
+        // Uniforms
         this.uniLocation = [
-          // this.gl.getUniformLocation(this.program, 'mvpMatrix'),
           this.gl.getUniformLocation(this.program, 'mMatrix'),
           this.gl.getUniformLocation(this.program, 'time'),
           this.gl.getUniformLocation(this.program, 'resolution'),
           this.gl.getUniformLocation(this.program, 'color'),
+          this.gl.getUniformLocation(this.program, 'strength'),
         ];
-        // uniformに変更・追加があれば修正
         this.uniType = [
-          // 'uniformMatrix4fv',
           'uniformMatrix4fv',
           'uniform1f',
           'uniform2fv',
           'uniform4fv',
+          'uniform1f',
         ];
         resolve();
       });
@@ -72,39 +87,55 @@ class WebGLApp {
   }
 
   setup() {
-    // 頂点座標の定義
-    const VERTEX_COUNT = 100; // 頂点の個数
-    this.positions = [];       // 頂点座標
-    this.colors = [];          // 頂点色
-    this.circleNum = 15;
-    this.circleSize = 1;
+    // Vertecies Config
+    let vertexCount = 97;
+    this.positionsA = []; // Circle
+    this.positionsB = []; // Square
+    this.colors = [];
+    this.geoRepeat = 20; // Repeat
+    this.geoSize = 1;
+    const EDGE_NUM = 4; // Square Edge Num
 
-    // 円座標生成
-    for (let j = 0; j < VERTEX_COUNT; j += 1) {
-      const rad = (Math.PI * 2) * (j / VERTEX_COUNT);
+    // Adjustment to use the same particle number for A & B
+    vertexCount = vertexCount % EDGE_NUM == 0 ? vertexCount : vertexCount + (EDGE_NUM - vertexCount % EDGE_NUM);
+
+    // Coordinate A
+    for (let i = 0; i < vertexCount; i += 1) {
+      const rad = (Math.PI * 2) * (i / vertexCount);
       const x = Math.sin(rad);
       const y = Math.cos(rad);
-      this.positions.push(x, y, 0);
+      this.positionsA.push(x, y, 0);
     }
 
-    //　色生成
-    for(let i = 0; i < this.circleNum; i += 1) {
-      const tmpRgb = this.hslToRgb((360 / this.circleNum) * i, 100, 75); // Normalizeが必要
-      this.colors.push(
-        tmpRgb.r,
-        tmpRgb.g,
-        tmpRgb.b,
-        1,
-      );
+    // Coordinate B
+    const PNUM_ON_EDGE = vertexCount / EDGE_NUM;
+    const P_INTERVAL = (this.geoSize / PNUM_ON_EDGE) * (1 / this.geoSize);
+    for (let i = 0; i < PNUM_ON_EDGE; i += 1) {
+      this.positionsB.push(-0.5 + P_INTERVAL * i, 0.5, 0.0);
     }
-    
+    for (let i = 0; i < PNUM_ON_EDGE; i += 1) {
+      this.positionsB.push(0.5, 0.5 - P_INTERVAL * i, 0.0);
+    }
+    for (let i = 0; i < PNUM_ON_EDGE; i += 1) {
+      this.positionsB.push(0.5 - P_INTERVAL * i, -0.5, 0.0);
+    }
+    for (let i = 0; i < PNUM_ON_EDGE; i += 1) {
+      this.positionsB.push(-0.5, -0.5 + P_INTERVAL * i, 0.0);
+    }
+
+    // Color
+    for(let i = 0; i < this.geoRepeat; i += 1) {
+      const tmpRgb = this.hslToRgb((360 / this.geoRepeat) * i, 100, 75);
+      this.colors.push(tmpRgb.r, tmpRgb.g, tmpRgb.b, 1);
+    }
 
     // VBO
     this.vbo = [
-      this.createVbo(this.positions),
+      this.createVbo(this.positionsA),
+      this.createVbo(this.positionsB),
     ];
 
-    // Render初期化時必要
+    // Render Config
     this.gl.clearColor(.1, .1, .1, 1);
     this.gl.clearDepth(1);
     
@@ -132,21 +163,23 @@ class WebGLApp {
     this.gl.useProgram(this.program);
     this.setAttribute(this.vbo, this.attLocation, this.attStride);
 
-    // カメラ関連のパラメータを決める
-    const cameraPosition    = [0.0, 0.0, 1.0];             // カメラの座標
-    const centerPoint       = [0.0, 0.0, 0.0];             // カメラの注視点
-    const cameraUpDirection = [0.0, 1.0, 0.0];             // カメラの上方向
-    const fovy   = 60 * this.camera.scale;                 // カメラの視野角
-    const aspect = this.canvas.width / this.canvas.height; // カメラのアスペクト比
-    const near   = 0.1;                                    // 最近距離クリップ面
-    const far    = 10.0;                                   // 最遠距離クリップ面
-    // モデル関連パラメータ
-    let m = null;
-    const COLOR_STRIDE = 4;
+    // Camera Config
+    const cameraPosition    = [0.0, 0.0, 1.0];
+    const centerPoint       = [0.0, 0.0, 0.0];
+    const cameraUpDirection = [0.0, 1.0, 0.0];
+    // const fovy   = 60 * this.camera.scale; // Angle
+    // const aspect = this.canvas.width / this.canvas.height; // Aspect Ratio
+    const near   = -5;
+    const far    =  5;
+    const left   = -1;
+    const right  =  1;
+    const top    =  1;
+    const bottom = -1;
 
     // ビュー・プロジェクション座標変換行列
     this.vMatrix  = Mat4.lookAt(cameraPosition, centerPoint, cameraUpDirection);
-    this.pMatrix  = Mat4.perspective(fovy, aspect, near, far);
+    // this.pMatrix  = Mat4.perspective(fovy, aspect, near, far); // 遠近法
+    this.pMatrix  = Mat4.ortho(left, right, top, bottom, near, far); // 平行投影法
     this.vpMatrix = Mat4.multiply(this.pMatrix, this.vMatrix);
     // カメラのパラメータ類を更新し行列に効果を与える
     this.camera.update();
@@ -154,66 +187,65 @@ class WebGLApp {
     quaternionMatrix = Qtn4.toMatIV(this.camera.qtn, quaternionMatrix);
     this.vpMatrix = Mat4.multiply(this.vpMatrix, quaternionMatrix);
 
-    // モデル座標変換行列
-    for(let i = 0; i < this.circleNum; i += 1) {
-      // ModelMatrix Initialization
-      m = Mat4.identity(this.mMatrix);
+    // Model Matrix
+    const COLOR_STRIDE = 4;
+    for(let i = 0; i < this.geoRepeat; i += 1) {
+
+      // Initialization
+      this.mMatrix = Mat4.identity(this.mMatrix);
+
       // Rotation A
-      const angleA = 0.2 * i;
-      const timeA = this.currentTime + angleA;
-      const mixStrength = (Math.cos(timeA) * .5) + .5; // Mix strength generated from the timeA
-      m = Mat4.rotate(
-        m,
-        Math.cos(timeA) * 2,
+      const timeA = this.currentTime + (0.2 * i);
+      this.mMatrix = Mat4.rotate(
+        this.mMatrix,
+        Math.cos(timeA / 3) * 3,
         Vec3.create(0.0, 1.0, 1.0),
-        m
+        this.mMatrix
       );
+
+      // Mix Strength
+      const mixStrength = (Math.cos(timeA * .4) * .5) + .5;
+
       // Scaling
-      const sizeScale = this.circleSize - (this.circleSize / this.circleNum * i);
-      m = Mat4.scale(m, Vec3.create(sizeScale, sizeScale, sizeScale), m);
+      const sizeScale = this.geoSize - (this.geoSize / this.geoRepeat * i);
+      this.mMatrix = Mat4.scale(this.mMatrix, Vec3.create(sizeScale, sizeScale, sizeScale), this.mMatrix);
+
       // Rotation B
-      m = Mat4.rotate(
-        m,
-        Math.sin(this.currentTime * .5),
+      this.mMatrix = Mat4.rotate(
+        this.mMatrix,
+        Math.sin(this.currentTime * .25),
         Vec3.create(1.0, 0.0, 1.0),
-        m
+        this.mMatrix
       );
-  
-      // attribute と uniform を設定・更新し頂点をレンダリングする
+
+      // Aspect Adjustment
+      this.mMatrix = Mat4.scale(
+        this.mMatrix,
+        Vec3.create(this.fittingRatio.x, this.fittingRatio.y, 1.0),
+        this.mMatrix
+      );
+
+      // Uniform Transfer
       this.setUniform([
-        // this.mvpMatrix,
-        m,//Mat4.multiply(this.vpMatrix, m),
+        this.mMatrix, // Mat4.multiply(this.vpMatrix, this.mMatrix), // 
         this.currentTime,
-        [window.innerWidth, window.innerHeight],
+        [window.innerWidth, window.innerHeight], // resolution
         [
           this.colors[i * COLOR_STRIDE + 0],
           this.colors[i * COLOR_STRIDE + 1],
           this.colors[i * COLOR_STRIDE + 2],
           this.colors[i * COLOR_STRIDE + 3],
         ],
+        mixStrength,
       ], this.uniLocation, this.uniType);
-      this.gl.drawArrays(this.gl.POINTS, 0, this.positions.length / 3);
+      this.gl.drawArrays(this.gl.POINTS, 0, this.positionsA.length / 3);
     }
-
-    // this.mMatrix = m;
-    // this.mvpMatrix = Mat4.multiply(this.vpMatrix, this.mMatrix);
-
-
-    // // 以下は軸の描画 -------------------------------------------------------
-    // this.setAttribute(this.axisVbo, this.attLocation, this.attStride);
-    // this.setUniform([
-    //   this.vpMatrix,
-    //   this.currentTime,
-    //   0.0,
-    // ], this.uniLocation, this.uniType);
-    // gl.drawArrays(gl.LINES, 0, this.axisPosition.length / 3);
   }
 
   /*************************************************
   Utilities
   *************************************************/
 
-  // Shaderをtext形式で非同期読み込み
   loadShader(paths) {
     const promises = paths.map(path => {
       return fetch(path).then(response => {
@@ -223,7 +255,6 @@ class WebGLApp {
     return Promise.all(promises);
   }
 
-  // Shaderを生成・コンパイル
   createShader(src, type) {
     const shader = this.gl.createShader(type);
     this.gl.shaderSource(shader, src);
@@ -236,7 +267,6 @@ class WebGLApp {
     }
   }
 
-  // ShaderをProgramにアタッチ・リンクする
   createProgram(vs, fs) {
     const program = this.gl.createProgram();
     this.gl.attachShader(program, vs);
@@ -251,7 +281,6 @@ class WebGLApp {
     }
   }
 
-  // VBO Generation
   createVbo(data) {
     const vbo = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vbo);
@@ -260,7 +289,6 @@ class WebGLApp {
     return vbo;
   }
 
-  // Attributes Setup
   setAttribute(vbo, attL, attS, ibo) {
     vbo.forEach((v, index) => {
       this.gl.bindBuffer(this.gl.ARRAY_BUFFER, v);
@@ -272,7 +300,6 @@ class WebGLApp {
     }
   }
 
-  // Uniform Setup
   setUniform(value, uniL, uniT) {
     value.forEach((v, index) => {
       const type = uniT[index];
@@ -284,7 +311,6 @@ class WebGLApp {
     });
   }
 
-  // Color
   hslToRgb(h, s, l) {
     const HUE_MAX = 360;
     const SATURATION_MAX = 100;
@@ -838,24 +864,8 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 })
 
-/**
-円を作る
-同心円を作る
-回転 mMatrix用意 JSとShader
-だめ回転 DelayGroupIDを作成  現在の数 < 100（particle数 * i）個 = GroupId(i * 1)
-だめ回転 Shader内でDelayをかける time + (delayTime * GroupId)
-頂点 一つの円
-頂点 renderでスケール、回転を設定
-dotを丸に
-色 HSL変換 uniformで送る
-回転数変更
-色 10以上増えると色相環を周回してしまう
-mixの強度を回転のsin波から生成
------------------- 済み
-四角の座標生成
-mixの強度uniformを生成
+/** 
+jsでアスペクト比出す
+mat4.scaleでmodelMarixを変形
 
-Resizeでアス比固定 -> model動かしているので、vpMatrix作りそこにもratioかける -> だめ 質問候補
-Resizeでアス比固定 -> jsのcameraのアスペクトで計算してみる
-透明度 homework01見る codepenみつけた
 */
