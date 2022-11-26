@@ -39,6 +39,7 @@ class App {
         const vs = this.createShader(shaders[0], this.gl.VERTEX_SHADER);
         const fs = this.createShader(shaders[1], this.gl.FRAGMENT_SHADER);
         this.program = this.createProgram(vs, fs);
+        console.log('this.program: ', this.program);
         // Attributes & Strides Location Setting
         this.attLocation = [
           this.gl.getAttribLocation(this.program, 'position'),
