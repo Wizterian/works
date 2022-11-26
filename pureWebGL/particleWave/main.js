@@ -89,7 +89,7 @@ class WebGLApp {
     this.positionsA = []; // Circle
     this.positionsB = []; // Square
     this.colors = [];
-    this.geoRepeat = 20; // Repeat
+    this.geoRepeat = 25; // Repeat
     this.geoSize = 1;
     const EDGE_NUM = 4; // Square Edge Num
 
@@ -230,8 +230,8 @@ class WebGLApp {
       this.mvpMatrix = Mat4.scale(
         this.mvpMatrix,
         new Float32Array([
-          this.ratioToFit.y * 2,
-          this.ratioToFit.x * 2,
+          this.ratioToFit.y * 3.5,
+          this.ratioToFit.x * 3.5,
           1.0
         ]),
         this.mvpMatrix
