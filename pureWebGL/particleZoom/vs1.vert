@@ -12,6 +12,7 @@ varying vec4  vColor;
 
 void main() {
   vColor = color;
+  float rad = 3.14 * 2.;
 
   // アス比維持して背景全体にフィット
   vec2 ratio = vec2(
@@ -21,8 +22,8 @@ void main() {
   vec3 tmpPos = position * vec3(ratio, 0.0);
 
   // 個々の軽微な動き(sin(時間 + 初期ラジアン角) * 振幅の強さ)
-  tmpPos.x += (sin((time * (2. * random)) + (3.14 * random))) * (0.004 * random);
-  tmpPos.y += ((cos((time * (1. * random)) + (3.14 * random))) * (0.004 * random)) * direction;
+  tmpPos.x += (sin((time * random) + (rad * random))) * (0.01 * random);
+  tmpPos.y += ((cos((time * (1.25 * random)) + (rad * random))) * (0.01 * random)) * direction;
 
   // アス比で見切れたマウス座標をウィンドウに合わせ距離算出
   float mouseToPoint = length(position.xy - vec2(mouse.x * ( 1. / ratio.x), mouse.y * ( 1. / ratio.y))); 
