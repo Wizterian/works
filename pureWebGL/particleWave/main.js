@@ -9,7 +9,6 @@ class WebGLApp {
     this.render    = this.render.bind(this);
 
     this.mMatrix   = Mat4.identity(Mat4.create());
-    this.resize = this.resize.bind(this);
   }
 
   init(canvas) {
@@ -24,20 +23,6 @@ class WebGLApp {
     if (this.canvas == null) {throw new Error('invalid argument');}
     this.gl = this.canvas.getContext('webgl');
     if (this.gl == null) {throw new Error('webgl not supported');}
-
-    // Resize
-    this.resize();
-    window.addEventListener('resize', this.resize, false);
-  }
-
-  // Resize
-  resize() {
-    this.canvas.width  = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-    this.ratioToFit = {
-      x: Math.min(this.canvas.width / this.canvas.height, 1.0),
-      y: Math.min(this.canvas.height / this.canvas.width, 1.0),
-    }
   }
   
   load() {
@@ -230,8 +215,8 @@ class WebGLApp {
       this.mvpMatrix = Mat4.scale(
         this.mvpMatrix,
         new Float32Array([
-          this.ratioToFit.y * 3.5,
-          this.ratioToFit.x * 3.5,
+          Math.min(this.canvas.height / this.canvas.width, 1.0) * 3.5,
+          Math.min(this.canvas.width / this.canvas.height, 1.0) * 3.5,
           1.0
         ]),
         this.mvpMatrix
