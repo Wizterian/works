@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
   .then(() => {
     webgl.setup();
     webgl.debugSetting();
-    // webgl.render();
+    webgl.render();
   });
 }, false);
 
@@ -39,6 +39,10 @@ class WebGLFrame {
 
     // テクスチャのブレンド係数 @@@
     this.blendingRatio = 1.0;
+
+    this.resize = this.resize.bind(this);
+    this.imageResolution = {x: 1024, y: 1024};
+
   }
   /**
    * WebGL を実行するための初期化処理を行う。
@@ -56,11 +60,23 @@ class WebGLFrame {
     if (this.canvas == null) {throw new Error('invalid argument');}
     this.gl = this.canvas.getContext('webgl');
     if (this.gl == null) {throw new Error('webgl not supported');}
+
+    // リサイズイベント
+    this.resize();
+    window.addEventListener('resize', this.resize, false);
   }
-  /**
-   * シェーダやテクスチャ用の画像など非同期で読み込みする処理を行う。
-   * @return {Promise}
-   */
+
+  // リサイズ処理
+  resize() {
+    this.canvas.width  = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+
+    this.fittingRatio = {
+      x: Math.min((this.canvas.width / this.canvas.height) / (this.imageResolution.x / this.imageResolution.y), 1.0),
+      y: Math.min((this.canvas.height / this.canvas.width) / (this.imageResolution.y / this.imageResolution.x), 1.0)
+    }
+  }
+
   load() {
     // ロード完了後に必要となるプロパティを初期化
     this.program     = null;
@@ -69,7 +85,7 @@ class WebGLFrame {
     this.uniLocation = null;
     this.uniType     = null;
 
-    this.textures = [];
+    this.textures = null;
     this.effectMap = null;
 
     return new Promise((resolve) => {
@@ -100,6 +116,7 @@ class WebGLFrame {
           gl.getUniformLocation(this.program, 'textureUnit1'),
           gl.getUniformLocation(this.program, 'textureUnit2'),
           gl.getUniformLocation(this.program, 'textureUnit3'),
+          gl.getUniformLocation(this.program, 'fittingRatio'),
         ];
         this.uniType = [
           'uniformMatrix4fv',
@@ -107,33 +124,42 @@ class WebGLFrame {
           'uniform1i',
           'uniform1i',
           'uniform1i',
+          'uniform2fv',
         ];
 
         // 複数画像ロード
         const imgs = [
           './img/1.jpg',
           './img/2.jpg',
-          './img/3.jpg'
         ];
-        this.textures = imgs.map(path => this.createTextureFromFile(path));
-        return Promise.all(this.textures);
+        let textures = [];
+        textures = imgs.map(path => this.createTextureFromFile(path));
+        return Promise.all(textures);
 
       //   // テクスチャ用の素材１をロード
       //   return this.createTextureFromFile('./sample1.jpg')
       // })
-      // .then(textures => {
+      // .then(texture => {
       //   // 直前でバインドするとして、いったんプロパティに入れておく
       //   this.texture1 = texture;
       //   // テクスチャ用の素材２をロード
       //   return this.createTextureFromFile('./sample2.jpg')
       // })
-      // .then((texture) => {
+      // .then(texture => {
       //   // 直前でバインドするとして、いったんプロパティに入れておく
       //   this.texture2 = texture;
       //   // テクスチャ用の素材３をロード @@@
       //   return this.createTextureFromFile('./monochrome.jpg')
       })
+      // .then((texture) => {
+      //   // 直前でバインドするとして、いったんプロパティに入れておく
+      //   this.texture3 = texture;
+
+      //   // load メソッドを解決
+      //   resolve();
+      // });
       .then(textures => {
+        this.textures = [...textures];
         return this.createTextureFromFile('./monochrome.jpg')
       })
       .then(effectMap => {
@@ -278,20 +304,23 @@ class WebGLFrame {
     // Program Selection
     this.gl.useProgram(this.program);
 
-    // Texture Setup
+    // // 0 番目のユニットを指定してテクスチャ１をバインド
     // this.gl.activeTexture(this.gl.TEXTURE0);
-    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[0]);
-   
+    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture1);
+    // // 1 番目のユニットを指定してテクスチャ２をバインド
     // this.gl.activeTexture(this.gl.TEXTURE1);
-    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.textures[1]);
-   
+    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture2);
+    // // 2 番目のユニットを指定してテクスチャ３をバインド @@@
     // this.gl.activeTexture(this.gl.TEXTURE2);
     // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture3);
 
+    // Texture Setup
     this.textures.forEach((texture, index) => {
       this.gl.activeTexture(this.gl.TEXTURE0 + index);
       this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
     })
+    this.gl.activeTexture(this.gl.TEXTURE2);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.effectMap);
 
     // attribute と uniform を設定・更新し頂点をレンダリングする
     this.setAttribute(this.vbo, this.attLocation, this.attStride, this.ibo);
@@ -301,6 +330,7 @@ class WebGLFrame {
       0, // それぞれのテクスチャユニットを指定
       1, // それぞれのテクスチャユニットを指定
       2, // それぞれのテクスチャユニットを指定
+      [this.fittingRatio.x, this.fittingRatio.y],
     ], this.uniLocation, this.uniType);
     this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
 
@@ -679,19 +709,26 @@ class InteractionCamera {
 TODO 波打ってDissolve Trans
 
 1. 複数画像をload 前のscript参照
------ 済
 2. Planeをつくる
 2. js uniformでtextureを2枚送る（一旦ベタ）
-2. fragment shader作る
 2. 2枚の画像をmix fadeする
-
+0. コード読む https://tympanus.net/Development/webGLImageTransitions/index.html
+2. jsでaspect比率求め、Fragment Shaderに設定
+2. Fragment SHader内にアス比加算
+2. planeをcontain
+2. fragment shader作る
+----- 済
+（1. JSからCamera & View削除）
+2. やってみる https://zenn.dev/pentamania/articles/threejs-dissolve-effect-sample
 
 3. 2枚の画像をDissolve
-　https://codepen.io/timseverien/pen/BYJMRJ?editors=1000
+  https://github.com/ykob/glsl-dissolve/blob/master/src/glsl/dissolve.fs（cnoise使っている）
+  https://codepen.io/timseverien/pen/BYJMRJ?editors=1000
+  https://zenn.dev/pentamania/articles/threejs-dissolve-effect-sample（画像ノイズ使ってるので良さそう）
   ・マス目閾値を使ってmix
   ・上から下のグラデーション、閾値を使って乗算
   ・Opacity0-1を乗算
-4. sin波
+4. sin波 or 3Dモデル
 
 
 */
