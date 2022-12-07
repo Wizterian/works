@@ -117,6 +117,10 @@ class WebGLFrame {
           gl.getUniformLocation(this.program, 'textureUnit2'),
           gl.getUniformLocation(this.program, 'textureUnit3'),
           gl.getUniformLocation(this.program, 'fittingRatio'),
+          gl.getUniformLocation(this.program, 'threshold'),
+          gl.getUniformLocation(this.program, 'edgeWidth'),
+          // gl.getUniformLocation(this.program, 'edgeColor')
+          gl.getUniformLocation(this.program, 'time'),
         ];
         this.uniType = [
           'uniformMatrix4fv',
@@ -125,6 +129,10 @@ class WebGLFrame {
           'uniform1i',
           'uniform1i',
           'uniform2fv',
+          'uniform1f',
+          'uniform1f',
+          // 'uniform4fv'
+          'uniform1f',
         ];
 
         // 複数画像ロード
@@ -314,7 +322,7 @@ class WebGLFrame {
     // this.gl.activeTexture(this.gl.TEXTURE2);
     // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture3);
 
-    // Texture Setup
+    // Texture Attach
     this.textures.forEach((texture, index) => {
       this.gl.activeTexture(this.gl.TEXTURE0 + index);
       this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
@@ -322,15 +330,19 @@ class WebGLFrame {
     this.gl.activeTexture(this.gl.TEXTURE2);
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.effectMap);
 
-    // attribute と uniform を設定・更新し頂点をレンダリングする
+    // Attributes & Uniforms
     this.setAttribute(this.vbo, this.attLocation, this.attStride, this.ibo);
     this.setUniform([
       this.mvpMatrix,
       this.blendingRatio,
-      0, // それぞれのテクスチャユニットを指定
-      1, // それぞれのテクスチャユニットを指定
-      2, // それぞれのテクスチャユニットを指定
+      0,
+      1,
+      2, // Displacement Map
       [this.fittingRatio.x, this.fittingRatio.y],
+      0.5,
+      0.1,
+      // new Float32Array([1.0, 1.0, 0.0, 1.0]),
+      this.currentTime,
     ], this.uniLocation, this.uniType);
     this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
 
@@ -717,18 +729,21 @@ TODO 波打ってDissolve Trans
 2. Fragment SHader内にアス比加算
 2. planeをcontain
 2. fragment shader作る
+2. 難 やってみる https://zenn.dev/pentamania/articles/threejs-dissolve-effect-sample
+2. 難 threshold、uEdgeWidth、uEdgeColorをベタで
+2 time用意
+2 普通のDisplacement Map
+2. hover-effect見てdisplacement mapの書き方混入
+2. Clampして（座標移動なしで）使う schoolのscript参照
 ----- 済
-（1. JSからCamera & View削除）
-2. やってみる https://zenn.dev/pentamania/articles/threejs-dissolve-effect-sample
+3. Dissolve挑戦
 
+（1. JSからCamera & View削除）
 3. 2枚の画像をDissolve
   https://github.com/ykob/glsl-dissolve/blob/master/src/glsl/dissolve.fs（cnoise使っている）
-  https://codepen.io/timseverien/pen/BYJMRJ?editors=1000
   https://zenn.dev/pentamania/articles/threejs-dissolve-effect-sample（画像ノイズ使ってるので良さそう）
   ・マス目閾値を使ってmix
   ・上から下のグラデーション、閾値を使って乗算
   ・Opacity0-1を乗算
 4. sin波 or 3Dモデル
-
-
 */
