@@ -1,12 +1,3 @@
-
-/** ===========================================================================
- * 複数のテクスチャの色を線形に補間することで、画像がスムーズに切り替わっている
- * ように見えるようなビジュアルを実現することができましたが……
- * ここでは、第三の画像を利用して、その画像の色を指標にしたトランジション（遷移）
- * に挑戦してみましょう。
- * トランジション用の素材を変更すれば、手軽に質感や外観を変更できます。
- * ========================================================================= */
-
 const MAT = new matIV();
 const QTN = new qtnIV();
 
@@ -37,17 +28,13 @@ class WebGLFrame {
     this.vpMatrix  = MAT.identity(MAT.create());
     this.mvpMatrix = MAT.identity(MAT.create());
 
-    // テクスチャのブレンド係数 @@@
     this.blendingRatio = 1.0;
 
     this.resize = this.resize.bind(this);
     this.imageResolution = {x: 1024, y: 1024};
 
   }
-  /**
-   * WebGL を実行するための初期化処理を行う。
-   * @param {HTMLCanvasElement|string} canvas - canvas への参照か canvas の id 属性名のいずれか
-   */
+
   init(canvas) {
     if (canvas instanceof HTMLCanvasElement === true) {
       this.canvas = canvas;
@@ -61,12 +48,11 @@ class WebGLFrame {
     this.gl = this.canvas.getContext('webgl');
     if (this.gl == null) {throw new Error('webgl not supported');}
 
-    // リサイズイベント
+    // Resize
     this.resize();
     window.addEventListener('resize', this.resize, false);
   }
 
-  // リサイズ処理
   resize() {
     this.canvas.width  = window.innerWidth;
     this.canvas.height = window.innerHeight;
@@ -78,7 +64,6 @@ class WebGLFrame {
   }
 
   load() {
-    // ロード完了後に必要となるプロパティを初期化
     this.program     = null;
     this.attLocation = null;
     this.attStride   = null;
@@ -86,7 +71,7 @@ class WebGLFrame {
     this.uniType     = null;
 
     this.textures = null;
-    this.effectMap = null;
+    this.texMaps = null;
 
     return new Promise((resolve) => {
       this.loadShader([
@@ -98,7 +83,7 @@ class WebGLFrame {
         const vs = this.createShader(shaders[0], gl.VERTEX_SHADER);
         const fs = this.createShader(shaders[1], gl.FRAGMENT_SHADER);
         this.program = this.createProgram(vs, fs);
-        // attribute 変数関係
+        // Attributes
         this.attLocation = [
           gl.getAttribLocation(this.program, 'position'),
           gl.getAttribLocation(this.program, 'color'),
@@ -109,17 +94,17 @@ class WebGLFrame {
           4,
           2,
         ];
-        // uniform 変数関係
+        // Uniforms
         this.uniLocation = [
           gl.getUniformLocation(this.program, 'mvpMatrix'),
           gl.getUniformLocation(this.program, 'ratio'),
           gl.getUniformLocation(this.program, 'textureUnit1'),
           gl.getUniformLocation(this.program, 'textureUnit2'),
           gl.getUniformLocation(this.program, 'textureUnit3'),
+          gl.getUniformLocation(this.program, 'textureUnit4'),
           gl.getUniformLocation(this.program, 'fittingRatio'),
           gl.getUniformLocation(this.program, 'threshold'),
           gl.getUniformLocation(this.program, 'edgeWidth'),
-          // gl.getUniformLocation(this.program, 'edgeColor')
           gl.getUniformLocation(this.program, 'time'),
         ];
         this.uniType = [
@@ -128,14 +113,14 @@ class WebGLFrame {
           'uniform1i',
           'uniform1i',
           'uniform1i',
+          'uniform1i',
           'uniform2fv',
           'uniform1f',
           'uniform1f',
-          // 'uniform4fv'
           'uniform1f',
         ];
 
-        // 複数画像ロード
+        // Images
         const imgs = [
           './img/1.jpg',
           './img/2.jpg',
@@ -143,42 +128,29 @@ class WebGLFrame {
         let textures = [];
         textures = imgs.map(path => this.createTextureFromFile(path));
         return Promise.all(textures);
-
-      //   // テクスチャ用の素材１をロード
-      //   return this.createTextureFromFile('./sample1.jpg')
-      // })
-      // .then(texture => {
-      //   // 直前でバインドするとして、いったんプロパティに入れておく
-      //   this.texture1 = texture;
-      //   // テクスチャ用の素材２をロード
-      //   return this.createTextureFromFile('./sample2.jpg')
-      // })
-      // .then(texture => {
-      //   // 直前でバインドするとして、いったんプロパティに入れておく
-      //   this.texture2 = texture;
-      //   // テクスチャ用の素材３をロード @@@
-      //   return this.createTextureFromFile('./monochrome.jpg')
       })
-      // .then((texture) => {
-      //   // 直前でバインドするとして、いったんプロパティに入れておく
-      //   this.texture3 = texture;
-
-      //   // load メソッドを解決
-      //   resolve();
-      // });
       .then(textures => {
         this.textures = [...textures];
-        return this.createTextureFromFile('./monochrome.jpg')
+
+        // Images
+        const maps = [
+          './square2.png',
+          // './vGrad.png',
+          './fluid.jpg',
+        ];
+        let texMaps = [];
+        texMaps = maps.map(path => this.createTextureFromFile(path));
+        return Promise.all(texMaps);
+        // // return this.createTextureFromFile('./monochrome.jpg')
+        // return this.createTextureFromFile('./square.png')
       })
-      .then(effectMap => {
-        this.effectMap = effectMap;
-        resolve(); // resolve load func
+      .then(maps => {
+        this.texMaps = [...maps];
+        resolve();
       });
     });
   }
-  /**
-   * WebGL のレンダリングを開始する前のセットアップを行う。
-   */
+
   setup() {
     // Plane Geometry
     this.position = [
@@ -212,40 +184,18 @@ class WebGLFrame {
     // IBO
     this.ibo = this.createIbo(this.indices);
 
-    // Axis Guid
-    this.axisPosition = [
-      0.0, 0.0, 0.0,
-      1.0, 0.0, 0.0,
-      0.0, 0.0, 0.0,
-      0.0, 1.0, 0.0,
-      0.0, 0.0, 0.0,
-      0.0, 0.0, 1.0,
-    ];
-    this.axisColor = [
-      0.5, 0.0, 0.0, 1.0,
-      1.0, 0.2, 0.0, 1.0,
-      0.0, 0.5, 0.0, 1.0,
-      0.0, 1.0, 0.2, 1.0,
-      0.0, 0.0, 0.5, 1.0,
-      0.2, 0.0, 1.0, 1.0,
-    ];
-    this.axisTexCoord = [
-      0.0, 0.0,
-      0.0, 0.0,
-      0.0, 0.0,
-      0.0, 0.0,
-      0.0, 0.0,
-      0.0, 0.0,
-    ];
-    this.axisVbo = [
-      this.createVbo(this.axisPosition),
-      this.createVbo(this.axisColor),
-      this.createVbo(this.axisTexCoord),
-    ];
-
-    this.gl.clearColor(0.4, 0.4, 0.4, 1.0);
+    this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
     this.gl.clearDepth(1.0);
     this.gl.enable(this.gl.DEPTH_TEST);
+
+    this.gl.blendFuncSeparate(
+      this.gl.SRC_ALPHA,           // SRC_RGB
+      this.gl.ONE_MINUS_SRC_ALPHA, // DST_RGB
+      this.gl.ONE,                 // SRC_A
+      this.gl.ONE                  // DST_A
+    );
+    this.gl.blendEquation(this.gl.FUNC_ADD);
+    this.gl.enable(this.gl.BLEND);
 
     this.running = true;
     this.startingTime = Date.now();
@@ -312,23 +262,17 @@ class WebGLFrame {
     // Program Selection
     this.gl.useProgram(this.program);
 
-    // // 0 番目のユニットを指定してテクスチャ１をバインド
-    // this.gl.activeTexture(this.gl.TEXTURE0);
-    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture1);
-    // // 1 番目のユニットを指定してテクスチャ２をバインド
-    // this.gl.activeTexture(this.gl.TEXTURE1);
-    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture2);
-    // // 2 番目のユニットを指定してテクスチャ３をバインド @@@
-    // this.gl.activeTexture(this.gl.TEXTURE2);
-    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture3);
-
     // Texture Attach
     this.textures.forEach((texture, index) => {
       this.gl.activeTexture(this.gl.TEXTURE0 + index);
       this.gl.bindTexture(this.gl.TEXTURE_2D, texture);
     })
-    this.gl.activeTexture(this.gl.TEXTURE2);
-    this.gl.bindTexture(this.gl.TEXTURE_2D, this.effectMap);
+    this.texMaps.forEach((map, index) => {
+      this.gl.activeTexture(this.gl.TEXTURE0 + (index + this.textures.length));
+      this.gl.bindTexture(this.gl.TEXTURE_2D, map);
+    })
+    // this.gl.activeTexture(this.gl.TEXTURE2);
+    // this.gl.bindTexture(this.gl.TEXTURE_2D, this.effectMap);
 
     // Attributes & Uniforms
     this.setAttribute(this.vbo, this.attLocation, this.attStride, this.ibo);
@@ -338,33 +282,17 @@ class WebGLFrame {
       0,
       1,
       2, // Displacement Map
+      3, // Displacement Map
       [this.fittingRatio.x, this.fittingRatio.y],
       0.5,
       0.1,
-      // new Float32Array([1.0, 1.0, 0.0, 1.0]),
       this.currentTime,
     ], this.uniLocation, this.uniType);
     this.gl.drawElements(this.gl.TRIANGLES, this.indices.length, this.gl.UNSIGNED_SHORT, 0);
-
-    // 以下は軸の描画 -------------------------------------------------------
-    this.setAttribute(this.axisVbo, this.attLocation, this.attStride);
-    this.setUniform([
-      this.vpMatrix,
-      this.blendingRatio,
-      0,
-      1,
-      2,
-    ], this.uniLocation, this.uniType);
-    this.gl.drawArrays(this.gl.LINES, 0, this.axisPosition.length / 3);
   }
 
   // Utility Methods =========================================================
 
-  /**
-   * シェーダのソースコードを外部ファイルから取得する。
-   * @param {Array.<string>} pathArray - シェーダを記述したファイルのパス（の配列）
-   * @return {Promise}
-   */
   loadShader(pathArray) {
     if (Array.isArray(pathArray) !== true) {
       throw new Error('invalid argument');
@@ -375,13 +303,6 @@ class WebGLFrame {
     return Promise.all(promises);
   }
 
-  /**
-   * シェーダオブジェクトを生成して返す。
-   * コンパイルに失敗した場合は理由をアラートし null を返す。
-   * @param {string} source - シェーダのソースコード文字列
-   * @param {number} type - gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
-   * @return {WebGLShader} シェーダオブジェクト
-   */
   createShader(source, type) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -398,13 +319,6 @@ class WebGLFrame {
     }
   }
 
-  /**
-   * プログラムオブジェクトを生成して返す。
-   * シェーダのリンクに失敗した場合は理由をアラートし null を返す。
-   * @param {WebGLShader} vs - 頂点シェーダオブジェクト
-   * @param {WebGLShader} fs - フラグメントシェーダオブジェクト
-   * @return {WebGLProgram} プログラムオブジェクト
-   */
   createProgram(vs, fs) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -423,11 +337,6 @@ class WebGLFrame {
     }
   }
 
-  /**
-   * VBO を生成して返す。
-   * @param {Array} data - 頂点属性データを格納した配列
-   * @return {WebGLBuffer} VBO
-   */
   createVbo(data) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -440,11 +349,6 @@ class WebGLFrame {
     return vbo;
   }
 
-  /**
-   * IBO を生成して返す。
-   * @param {Array} data - インデックスデータを格納した配列
-   * @return {WebGLBuffer} IBO
-   */
   createIbo(data) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -457,11 +361,6 @@ class WebGLFrame {
     return ibo;
   }
 
-  /**
-   * IBO を生成して返す。(INT 拡張版)
-   * @param {Array} data - インデックスデータを格納した配列
-   * @return {WebGLBuffer} IBO
-   */
   createIboInt(data) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -477,11 +376,6 @@ class WebGLFrame {
     return ibo;
   }
 
-  /**
-   * 画像ファイルを読み込み、テクスチャを生成してコールバックで返却する。
-   * @param {string} source - ソースとなる画像のパス
-   * @return {Promise}
-   */
   createTextureFromFile(source) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -505,15 +399,6 @@ class WebGLFrame {
     });
   }
 
-  /**
-   * フレームバッファを生成して返す。
-   * @param {number} width - フレームバッファの幅
-   * @param {number} height - フレームバッファの高さ
-   * @return {object} 生成した各種オブジェクトはラップして返却する
-   * @property {WebGLFramebuffer} framebuffer - フレームバッファ
-   * @property {WebGLRenderbuffer} renderbuffer - 深度バッファとして設定したレンダーバッファ
-   * @property {WebGLTexture} texture - カラーバッファとして設定したテクスチャ
-   */
   createFramebuffer(width, height) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -539,15 +424,6 @@ class WebGLFrame {
     return {framebuffer: frameBuffer, renderbuffer: depthRenderBuffer, texture: fTexture};
   }
 
-  /**
-   * フレームバッファを生成して返す。（フロートテクスチャ版）
-   * @param {object} ext - getWebGLExtensions の戻り値
-   * @param {number} width - フレームバッファの幅
-   * @param {number} height - フレームバッファの高さ
-   * @return {object} 生成した各種オブジェクトはラップして返却する
-   * @property {WebGLFramebuffer} framebuffer - フレームバッファ
-   * @property {WebGLTexture} texture - カラーバッファとして設定したテクスチャ
-   */
   createFramebufferFloat(ext, width, height) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -572,13 +448,6 @@ class WebGLFrame {
     return {framebuffer: frameBuffer, texture: fTexture};
   }
 
-  /**
-   * VBO を IBO をバインドし有効化する。
-   * @param {Array} vbo - VBO を格納した配列
-   * @param {Array} attL - attribute location を格納した配列
-   * @param {Array} attS - attribute stride を格納した配列
-   * @param {WebGLBuffer} ibo - IBO
-   */
   setAttribute(vbo, attL, attS, ibo) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -594,12 +463,6 @@ class WebGLFrame {
     }
   }
 
-  /**
-   * uniform 変数をまとめてシェーダに送る。
-   * @param {Array} value - 各変数の値
-   * @param {Array} uniL - uniform location を格納した配列
-   * @param {Array} uniT - uniform 変数のタイプを格納した配列
-   */
   setUniform(value, uniL, uniT) {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -615,13 +478,6 @@ class WebGLFrame {
     });
   }
 
-  /**
-   * 主要な WebGL の拡張機能を取得する。
-   * @return {object} 取得した拡張機能
-   * @property {object} elementIndexUint - Uint32 フォーマットを利用できるようにする
-   * @property {object} textureFloat - フロートテクスチャを利用できるようにする
-   * @property {object} textureHalfFloat - ハーフフロートテクスチャを利用できるようにする
-   */
   getWebGLExtensions() {
     if (this.gl == null) {
       throw new Error('webgl not initialized');
@@ -635,10 +491,6 @@ class WebGLFrame {
   }
 }
 
-/**
- * マウスでドラッグ操作を行うための簡易な実装例
- * @class
- */
 class InteractionCamera {
   /**
    * @constructor
@@ -735,8 +587,27 @@ TODO 波打ってDissolve Trans
 2 普通のDisplacement Map
 2. hover-effect見てdisplacement mapの書き方混入
 2. Clampして（座標移動なしで）使う schoolのscript参照
+3. Dissolve angleで動作確認
+4. TWGL読む
+4. start位置 https://codepen.io/kenjiSpecial/pen/BVxxJa
 ----- 済
-3. Dissolve挑戦
+4. Dissolve グラデーション + 閾値足す
+  https://gdpalace.wordpress.com/2017/10/07/transitions/
+  https://takap-tech.com/entry/2019/09/14/003915
+  https://www.youtube.com/watch?v=3mAsROQCYU8（7:00あたり）
+  マスクだけで表示する
+4. Easing
+  https://codepen.io/kenjiSpecial/pen/BVxxJa
+
+4. Click Event足す
+
+------ pend
+
+4. TWGLのカスタマイズ Shaderを書き換えて使えるか確認
+4. TWGLの書き換え
+4. Shaderは使う
+
+4. Dissolve sphereでやってみる
 
 （1. JSからCamera & View削除）
 3. 2枚の画像をDissolve
@@ -745,5 +616,4 @@ TODO 波打ってDissolve Trans
   ・マス目閾値を使ってmix
   ・上から下のグラデーション、閾値を使って乗算
   ・Opacity0-1を乗算
-4. sin波 or 3Dモデル
 */
