@@ -134,7 +134,10 @@ class WebGLFrame {
 
         // Images
         const maps = [
-          './square2.png',
+          // './hex.png',
+          // './dots.png',
+          './square.png',
+          // './square2.png',
           // './vGrad.png',
           './fluid.jpg',
         ];
@@ -591,6 +594,9 @@ TODO 波打ってDissolve Trans
 4. TWGL読む
 4. start位置 https://codepen.io/kenjiSpecial/pen/BVxxJa
 ----- 済
+4. gray scaleを試して終了
+
+
 4. Dissolve グラデーション + 閾値足す
   https://gdpalace.wordpress.com/2017/10/07/transitions/
   https://takap-tech.com/entry/2019/09/14/003915
