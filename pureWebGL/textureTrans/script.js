@@ -134,9 +134,12 @@ class WebGLFrame {
 
         // Images
         const maps = [
+          // './gridcloud.png',
+          './round.png',
+          // './round.png',
           // './hex.png',
           // './dots.png',
-          './square.png',
+          // './square.png',
           // './square2.png',
           // './vGrad.png',
           './fluid.jpg',
@@ -596,6 +599,14 @@ TODO 波打ってDissolve Trans
 ----- 済
 4. gray scaleを試して終了
 
+ opacityでなくmixでない方法を探す
+https://gl-transitions.com/gallery研究
+https://gl-transitions.com/editor/squareswire
+https://gl-transitions.com/editor/directionalwipe
+https://gl-transitions.com/editor/Radial
+
+
+------ pend
 
 4. Dissolve グラデーション + 閾値足す
   https://gdpalace.wordpress.com/2017/10/07/transitions/
@@ -606,8 +617,6 @@ TODO 波打ってDissolve Trans
   https://codepen.io/kenjiSpecial/pen/BVxxJa
 
 4. Click Event足す
-
------- pend
 
 4. TWGLのカスタマイズ Shaderを書き換えて使えるか確認
 4. TWGLの書き換え

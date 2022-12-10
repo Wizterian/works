@@ -51,55 +51,59 @@ void main() {
 
 
 
-  // square with square.png
-  float intensity = .05;
-  float PI = 3.141592;
-  float mixStrength = (sin(time * 1.5) * .5) + .5;
-  vec2 newUV = (vTexCoord - vec2(0.5)) * vec2(fittingRatio.xy) + vec2(0.5);
+  // // vertical and horizontal move with square.png
+  // float intensity = .05;
+  // float PI = 3.141592;
+  // float mixStrength = (sin(time * 1.5) * .5) + .5;
+  // vec2 newUV = (vTexCoord - vec2(0.5)) * vec2(fittingRatio.xy) + vec2(0.5);
 
-  // Displacement
-  vec4 displaceMap1 = texture2D(textureUnit3, newUV);
+  // // Displacement
+  // vec4 displaceMap1 = texture2D(textureUnit3, newUV);
 
-  // // イージング（mixの第3引数）
-	// float trans = clamp(1.6  * mixStrength - displaceMap1.r * 0.4 - newUV.x * 0.2, 0.0, 1.0);
-	// trans = easeInOutCirc(trans);
+  // // // イージング（mixの第3引数）
+	// // float trans = clamp(1.6  * mixStrength - displaceMap1.r * 0.4 - newUV.x * 0.2, 0.0, 1.0);
+	// // trans = easeInOutCirc(trans);
 
-  vec2 displaceImg1 = vec2(
-    newUV.x + displaceMap1.r * intensity * mixStrength,
-    newUV.y + displaceMap1.g * intensity * mixStrength
-  );
-  vec2 displaceImg2 = vec2(
-    newUV.x + displaceMap1.r * intensity * (1.0 - mixStrength),
-    newUV.y + displaceMap1.g * intensity * (1.0 - mixStrength)
-  );
+  // vec2 displaceImg1 = vec2(
+  //   newUV.x + displaceMap1.r * intensity * mixStrength,
+  //   newUV.y + displaceMap1.g * intensity * mixStrength
+  // );
+  // vec2 displaceImg2 = vec2(
+  //   newUV.x + displaceMap1.r * intensity * (1.0 - mixStrength),
+  //   newUV.y + displaceMap1.g * intensity * (1.0 - mixStrength)
+  // );
 
-  gl_FragColor = mix(
-    texture2D(textureUnit1, displaceImg1),
-    texture2D(textureUnit2, displaceImg2),
-    mixStrength
-  );
-
-
-
-  // // original 2 with hex.png
-  // float mixStrength = (sin(time) * .5) + .5;
-
-  // vec2 fittedTexCoord = (vTexCoord - vec2(0.5)) * vec2(fittingRatio.xy) + vec2(0.5);
-  // vec4 samplerColor1 = texture2D(textureUnit1, fittedTexCoord);
-  // vec4 samplerColor2 = texture2D(textureUnit2, fittedTexCoord);
-  // vec4 displacement = texture2D(textureUnit3, fittedTexCoord);
-
-  // // Clampして使う
-  // float r = clamp(mixStrength * 2.0 - displacement.r, 0.0, 1.0);
-
-  // // vec4 blendColor = mix(t1, t2, mixStrength);
-  // // vec4 blendColor = mix(samplerColor1, samplerColor2, mixStrength);
-  // vec4 blendColor = mix(samplerColor1, samplerColor2, r);
-  // gl_FragColor = vColor * blendColor;
+  // gl_FragColor = mix(
+  //   texture2D(textureUnit1, displaceImg1),
+  //   texture2D(textureUnit2, displaceImg2),
+  //   mixStrength
+  // );
 
 
 
-  // // Original
+  // static shift with hex.png
+  float ratio = (sin(time) * .5) + .5;
+
+  vec2 fittedTexCoord = (vTexCoord - vec2(0.5)) * vec2(fittingRatio.xy) + vec2(0.5);
+  vec4 samplerColor1 = texture2D(textureUnit1, fittedTexCoord);
+  vec4 samplerColor2 = texture2D(textureUnit2, fittedTexCoord);
+  vec4 displacement = texture2D(textureUnit3, fittedTexCoord);
+
+  // Clampして使う
+  float r = clamp(ratio * 2.0 - displacement.r, 0.0, 1.0);
+
+  /**
+  opacityでなくmixでない方法を探す
+  https://gl-transitions.com/gallery研究
+  */
+  // vec4 blendColor = mix(t1, t2, mixStrength);
+  // vec4 blendColor = mix(samplerColor1, samplerColor2, mixStrength);
+  vec4 blendColor = mix(samplerColor1, samplerColor2, r);
+  gl_FragColor = blendColor;
+
+
+
+  // // Original (static shift )
   // vec2 fittedTexCoord = (vTexCoord - vec2(0.5)) * vec2(fittingRatio.xy) + vec2(0.5);
 
   // // テクスチャから色を読み出す
