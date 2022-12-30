@@ -2,12 +2,21 @@ precision mediump float;
 
 // uniform vec4 globalColor; // 後で消す
 
-varying vec4 vSqCol;
-varying vec4 vRes;
+varying vec4 vColor;
+varying vec2 vRes;
+varying float vTime;
+
+float rectangle(vec2 p, float w, float h) {
+	return max(abs(p.x) - w, abs(p.y) - h);
+}
+
+float circle(vec2 p, float radius) {
+	return length(p) - radius;
+}
 
 void main() {
-  // gl_FragColor = globalColor;
-  gl_FragColor = vSqCol;
+// gl_FragColor = globalColor;
+  gl_FragColor = vColor;
   // gl_FragColor = vec4(1., 1., 0., 1.);
 
   // // new linews

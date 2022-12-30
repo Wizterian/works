@@ -1,3 +1,6 @@
+import {WebGLGeometry} from './geometry.js';
+import {WebGLUtility}  from './webgl.js';
+
 window.addEventListener('DOMContentLoaded', () => {
   const webgl = new WebGLFrame();
   webgl.init('webgl-canvas');
@@ -47,8 +50,8 @@ class WebGLFrame {
 
     return new Promise((resolve) => {
       this.loadShader([
-        './vs1.vert',
-        './fs1.frag',
+        './shader/vs1.vert',
+        './shader/fs1.frag',
       ])
       .then((shaders) => {
         const vs = this.createShader(shaders[0], this.gl.VERTEX_SHADER);
@@ -57,7 +60,7 @@ class WebGLFrame {
 
         this.attLocation = [
           this.gl.getAttribLocation(this.program, 'position'),
-          this.gl.getAttribLocation(this.program, 'sqColor'),
+          this.gl.getAttribLocation(this.program, 'color'),
         ];
         this.attStride = [
           3,
@@ -65,12 +68,12 @@ class WebGLFrame {
         ];
 
         this.uniLocation = [
-          // this.gl.getUniformLocation(this.program, 'globalColor'),
           this.gl.getUniformLocation(this.program, 'resolution'), // 画面サイズ
+          this.gl.getUniformLocation(this.program, 'time'), // 時間
         ];
         this.uniType = [
-          // 'uniform4fv',
           'uniform2fv',
+          'uniform1f',
         ];
 
         resolve();
@@ -78,25 +81,29 @@ class WebGLFrame {
     });
   }
 
-  setup() { // 線で四角を描く（IBO不要）
+  setup() {
+    // 線で四角を描く（IBO不要）
     this.position = [
-      -0.5,  0.5,  0.0,
-       0.5,  0.5,  0.0,
-      -0.5, -0.5,  0.0,
-       0.5, -0.5,  0.0,
+      // -0.5,  0.5,  0.0,
+      //  0.5,  0.5,  0.0,
+      // -0.5, -0.5,  0.0,
+      //  0.5, -0.5,  0.0,
+      0, 0, 0, 0
     ];
-    // this.sqColor設定
-    this.sqColor = [
-      1.0, 0.0, 0.0, 1.0,
-      0.0, 1.0, 0.0, 1.0,
-      0.0, 0.0, 1.0, 1.0,
-      1.0, 1.0, 0.0, 1.0,
+    // this.color設定
+    this.color = [
+      // 1.0, 0.0, 0.0, 1.0,
+      // 0.0, 1.0, 0.0, 1.0,
+      // 0.0, 0.0, 1.0, 1.0,
+      // 1.0, 1.0, 0.0, 1.0,
+      1.0, 0.0, 1.0, 1.0,
     ];
     this.vbo = [
       this.createVbo(this.position),
-      this.createVbo(this.sqColor),
+      this.createVbo(this.color),
     ];
 
+    // Other Setting
     this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
     this.running = false;
     this.startTime = Date.now();
@@ -116,11 +123,11 @@ class WebGLFrame {
     this.gl.useProgram(this.program);
     this.setAttribute(this.vbo, this.attLocation, this.attStride);
     this.setUniform([
-      // [0.1, 1.0, 0.5, 1.0], // Global Color
       [this.canvas.width, this.canvas.height], // Resolution
+      this.currentTime,
     ], this.uniLocation, this.uniType);
 
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.position.length / 3);
+    this.gl.drawArrays(this.gl.POINTS, 0, this.position.length / 3);
   }
 
   /****************************************************
@@ -402,60 +409,3 @@ class WebGLFrame {
   }
 }
 
-/** 
-
-目標
-  https://www.youtube.com/watch?v=h86SPA1KJm4
-  1・2D円　→ 四角 回転トンネル
-    Shaderで描く
-  2・3D円 → 四角 中心個別回転
-  3・Bloom
-
-  3・背景 kaleido scppe
-    解析 間に合えば
-    https://twgljs.org/examples/kaleidoscope.html
-  4.深度マップ
-
-
-
-- script不要削除
-- script不要コメントアウト
----------- 済
-- Plane作る
-- Plane用 Shader作る
-  線画使えない
-    https://wgld.org/d/webgl/w036.html
-    https://webgl.souhonzan.org/entry/?v=0565（win macで異なる）
-  図形を描き線画化
-    GLSLスク
-      http://127.0.0.1:5500/008/index.html
-
-  四角
-  https://www.pentacreation.com/blog/2021/01/210109.html
-  三角
-  https://www.pentacreation.com/blog/2021/01/210102.html
-  円
-  https://qiita.com/ienaga/items/3263a752da3287a6c4b6
-  https://nogson2.hatenablog.com/entry/2017/11/06/222759
-  曼荼羅
-  https://expensive.toys/mandala/
-- script timeとresolutionたす
-
-参考
-・2次元（丸→三角→四角morf）zoom bloom
-・particle zoom or 点滅回転（codepen）bloom
-・中心 3D particle 透明テクスチャ トランジション or curl noise + sin
-  https://www.youtube.com/watch?v=Hpta7bBsJB0
-・被写界深度
-  https://www.youtube.com/watch?v=X-dMOvEOQiM&t=13s
-・できれば
-  透明度
-    http://127.0.0.1:5500/008/index.html
-  ねじれ https://www.youtube.com/watch?v=WW-qjbdZo8I
-    https://www.youtube.com/watch?v=w9Ml9Mcmbd0
-    https://www.youtube.com/watch?v=CilG5LSSdmI
-  全体回転　https://www.youtube.com/watch?v=CM5sDOCfOmc&t=9s
-  mod
-  curl noise
-    https://twitter.com/Hau_kun/status/1372194570016935936?ref_src=twsrc%5Etfw
-*/
