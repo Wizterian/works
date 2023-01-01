@@ -36,6 +36,9 @@ class App {
     this.startTime = 0;
     this.currentTime = 0;
     this.render = this.render.bind(this);
+
+    this.resize = this.resize.bind(this);
+
     // this.ambientLight = 0.0;
     // this.lightVector = new Float32Array([0.0, 0.0, 1.0]);
   }
@@ -59,6 +62,7 @@ class App {
     this.gl.enable(this.gl.DEPTH_TEST);
 
     this.resize();
+    window.addEventListener('resize', this.resize, false);
   }
 
   resize() {
@@ -223,11 +227,14 @@ class App {
     ];
     this.standardAttrStride = [3, 3, 4];
     this.standardUniLocation = {
-      mvpMatrix: gl.getUniformLocation(this.standardProgram, 'mvpMatrix'), // MVP 行列
+      // mvpMatrix: gl.getUniformLocation(this.standardProgram, 'mvpMatrix'), // MVP 行列
       normalMatrix: gl.getUniformLocation(this.standardProgram, 'normalMatrix'), // 法線変換行列
       // ambientLight: gl.getUniformLocation(this.standardProgram, 'ambientLight'), // 環境光
       // lightVector: gl.getUniformLocation(this.standardProgram, 'lightVector'), // ライトベクトル
       // ballColor: gl.getUniformLocation(this.standardProgram, 'ballColor'), // 色
+      time: gl.getUniformLocation(this.standardProgram, 'time'), // 時間
+      model: gl.getUniformLocation(this.standardProgram, 'model'), // M行列
+      viewProjection: gl.getUniformLocation(this.standardProgram, 'viewProjection'), // VP行列
     };
   }
 
@@ -252,9 +259,9 @@ class App {
   render() {
     const gl = this.gl;
     if (this.isRender === true) requestAnimationFrame(this.render);
-    this.currentTime = (Date.now() - this.startTime);
+    this.currentTime = (Date.now() - this.startTime) / 1000;
 
-    // 通常描画
+    // 立方体描画
     {
       this.setupStandardRendering();
       const v = this.camera.update();
@@ -267,21 +274,20 @@ class App {
 
       WebGLUtility.enableBuffer(gl, this.cubeVBO, this.standardAttrLocation, this.standardAttrStride, this.cubeIBO);
 
-      const timeScale = 0.001;
       let m;
       for(let i = 0; i < this.cubeCount; i++) {
         m = m4.identity();
-        // m = m4.rotate(m, this.currentTime * timeScale, v3.create(1.0, 1.0, 1.0));
+        m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
         m = m4.translate(m, v3.create(
           this.cubePositions[i * this.cubePosStep + 0],
           this.cubePositions[i * this.cubePosStep + 1],
           this.cubePositions[i * this.cubePosStep + 2],
         ));
 
-        const mvp = m4.multiply(vp, m);
+        // const mvp = m4.multiply(vp, m);
         const normalMatrix = m4.transpose(m4.inverse(m));
 
-        gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
+        // gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
         gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
         // gl.uniform3fv(
         //   this.standardUniLocation.lightVector,
@@ -299,11 +305,14 @@ class App {
         //   this.ballColors[i * this.ballColorStep + 2],
         //   1.0
         // ]);
+        gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
+        gl.uniformMatrix4fv(this.standardUniLocation.model, false, m);
+        gl.uniformMatrix4fv(this.standardUniLocation.viewProjection, false, vp);
         gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
       }
     }
 
-    // // 通常描画
+    // // 球体描画
     // {
     //   this.setupStandardRendering();
     //   const v = this.camera.update();

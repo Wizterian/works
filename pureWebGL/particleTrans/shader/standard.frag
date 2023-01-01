@@ -1,6 +1,6 @@
 precision mediump float;
 
-uniform vec4 ballColor;
+// uniform vec4 ballColor;
 
 varying vec4 vColor;
 
