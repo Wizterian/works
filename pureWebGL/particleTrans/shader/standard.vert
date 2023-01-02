@@ -3,11 +3,9 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
 
-// uniform mat4 mvpMatrix;
+uniform mat4 mvpMatrix;
 uniform mat4 normalMatrix;
 uniform float time;
-uniform mat4 model;
-uniform mat4 viewProjection;
 // uniform vec3 lightVector;
 // uniform vec4 ambientLight;
 // uniform int normalVisibility;
@@ -37,5 +35,5 @@ void main(){
   vec3 newPos = position + vec3(0., s, 0.);
 
   // 座標変換
-  gl_Position = (viewProjection * model) * vec4(position, 1.0);
+  gl_Position = mvpMatrix * vec4(position, 1.0);
 }
