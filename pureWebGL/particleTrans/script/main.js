@@ -135,7 +135,7 @@ class App {
       // Geometry
       this.ballGeo = WebGLGeometry.sphere(
         6, 6,
-        1 / 80,
+        1 / 100,
         [1, 1, 0, 1]
       );
       this.ballVBO = [
@@ -186,7 +186,7 @@ class App {
     */
     {
       // Geometry
-      this.cubeGeo = WebGLGeometry.cube(1 / 40, [1, 0, 1, 1]);
+      this.cubeGeo = WebGLGeometry.cube(1 / 20, [1, 0, 1, 1]);
       this.cubeVBO = [
         WebGLUtility.createVBO(this.gl, this.cubeGeo.position),
         WebGLUtility.createVBO(this.gl, this.cubeGeo.normal),
@@ -198,7 +198,6 @@ class App {
       this.cubePosStep = 3;
       this.cubeColStep = 4;
 
-      // this.cubeCount = this.ballCount;
       const CUBE_EDGE = 1;
       this.cubeTempPos = [];
       this.cubeTempCol = [];
@@ -235,30 +234,39 @@ class App {
       // Position, Scale & Color
       this.windPosStep = 3;
       this.windColStep = 4;
+      this.windSclStep = 4;
 
-      // this.windCount = this.ballCount;
       const WIND_RADIUS = 1.5;
-      const X_RISE = .001;
+      const X_RISE = .005;
       this.windTempPos = [];
       this.windTempCol = [];
+      // this.windTempScl = [];
 
       for (let i = 0; i < this.pCount; i += 1) {
         const YZRad = Math.random() * Math.PI * 2;
-        const y = Math.sin(YZRad);
-        const z = Math.cos(YZRad);
-        // const jRad = Math.random() * Math.PI;
-        // const radius = Math.sin(jRad);
-        const x = (i * X_RISE) - ((X_RISE * this.pCount) / 2);
-
+        const yPos = Math.sin(YZRad);
+        const zPos = Math.cos(YZRad);
+        // sin波にする
+        const xPos = (i * X_RISE) - ((X_RISE * this.pCount) / 2);
         this.windTempPos.push(
-          x * WIND_RADIUS,
-          y * WIND_RADIUS,
-          z * WIND_RADIUS
+          xPos * WIND_RADIUS,
+          yPos * WIND_RADIUS,
+          zPos * WIND_RADIUS,
         );
+
+        // const xScl = 1.;
+        // const yScl = 5.;
+        // const zScl = 5.;
+        // this.windTempScl.push(
+        //   xScl,
+        //   yScl,
+        //   zScl,
+        // );
       }
 
       this.windPositions = new Float32Array(this.windTempPos);
       this.windColors = new Float32Array(this.windTempCol);
+      // this.windScales = new Float32Array(this.windTempScl);
     }
   }
 
@@ -316,29 +324,36 @@ class App {
     {
       this.setupStandardRendering();
 
-      WebGLUtility.enableBuffer(gl, this.ballVBO, this.standardAttrLocation, this.standardAttrStride, this.ballIBO);
+      WebGLUtility.enableBuffer(gl, this.cubeVBO, this.standardAttrLocation, this.standardAttrStride, this.cubeIBO);
 
       let m;
       for(let i = 0; i < this.pCount; i++) {
         m = m4.identity();
-        // m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
+        // m = m4.rotate(m, this.currentTime, v3.create(1.0, 0.0, 0.0));
         m = m4.translate(m, v3.create(
           this.windPositions[i * this.windPosStep + 0],
           this.windPositions[i * this.windPosStep + 1],
           this.windPositions[i * this.windPosStep + 2],
         ));
 
+        // m = m4.rotate(m, this.currentTime, v3.create(1.0, 0.0, 0.0));
+        // m = m4.scale(m, v3.create(
+        //   this.windScales[i * this.windSclStep + 0],
+        //   this.windScales[i * this.windSclStep + 1],
+        //   this.windScales[i * this.windSclStep + 2],
+        // ));
         const mvp = m4.multiply(vp, m);
         const normalMatrix = m4.transpose(m4.inverse(m));
 
         gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
         gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
         gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-        gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
+        // gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawArrays(gl.LINE_STRIP, 0, this.cubeGeo.position.length / 3);
       }
     }
 
-    // // 立方体描画
+    // 立方体描画
     // {
     //   this.setupStandardRendering();
 
@@ -380,7 +395,7 @@ class App {
     //   }
     // }
 
-    // // 球体描画
+    // 球体描画
     // {
     //   this.setupStandardRendering();
 
