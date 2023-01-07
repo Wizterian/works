@@ -1,3 +1,10 @@
+/**
+ * 0〜0.99までの乱数を返却 引数で範囲内乱数生成
+ * @param  {Number} max - 最大値
+ * @param  {Number} min - 最小値
+ * @return {Number} 0〜0.99もしくは設定した範囲の乱数
+ */
+export const rnd = (max=1, min=0) => Math.random() * ( max - min ) + min;
 
 /**
  * HSLからRGBを算出して返却

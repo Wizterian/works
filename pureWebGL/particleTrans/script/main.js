@@ -2,7 +2,7 @@ import {WebGLUtility}     from './webgl.js';
 import {WebGLMath}        from './math.js';
 import {WebGLGeometry}    from './geometry.js';
 import {WebGLOrbitCamera} from './camera.js';
-import {hslToRgb}         from './utils.js';
+import {hslToRgb, rnd}         from './utils.js';
 import '../../lib/tweakpane-3.1.0.min.js';
 
 const m4 = WebGLMath.Mat4;
@@ -126,7 +126,7 @@ class App {
     　r×r×r×π×4÷3
     */
 
-    this.pCount = 10;
+    this.pCount = 10000;
 
     /****************************************
     Ball
@@ -154,8 +154,8 @@ class App {
       this.ballTempPos = [];
       this.ballTempCol = [];
       for (let i = 0; i < this.pCount; i += 1) {
-        const iRad = Math.random() * Math.PI * 2;
-        const jRad = Math.random() * Math.PI;
+        const iRad = rnd() * Math.PI * 2;
+        const jRad = rnd() * Math.PI;
         const x = Math.sin(iRad);
         const z = Math.cos(iRad);
         const radius = Math.sin(jRad);
@@ -174,7 +174,7 @@ class App {
       // this.ballColorStep = 3;
       // this.ballColors = new Float32Array(this.ballNum * this.ballColorStep);
       // for(let i = 0; i < this.ballNum *this.ballColorStep; i += 1) {
-      //   const tmpRgb = hslToRgb((Math.random() * 135) + 75, 60, 80);
+      //   const tmpRgb = hslToRgb((rnd() * 135) + 75, 60, 80);
       //   this.ballColors[i * this.ballColorStep + 0] = tmpRgb.r;
       //   this.ballColors[i * this.ballColorStep + 1] = tmpRgb.g;
       //   this.ballColors[i * this.ballColorStep + 2] = tmpRgb.b;
@@ -186,7 +186,7 @@ class App {
     */
     {
       // Geometry
-      this.cubeGeo = WebGLGeometry.cube(1 / 20, [1, 0, 1, 1]);
+      this.cubeGeo = WebGLGeometry.cube(1 / 50, [1, 0, 1, 1]);
 
       this.cubeVBO = [
         WebGLUtility.createVBO(this.gl, this.cubeGeo.position),
@@ -203,20 +203,20 @@ class App {
       this.cubeTempPos = [];
       this.cubeTempCol = [];
       for (let i = 0; i < this.pCount; i += 1) {
-        const axis = Math.floor(Math.random() * 3);
+        const axis = Math.floor(rnd() * 3);
         let x, y, z;
         if(axis === 0) {
-          x = Math.random() * 2 - 1;
-          y = Math.random() * 2 - 1;
-          z = Math.random() >= .5 ? -1 : 1;
+          x = rnd() * 2 - 1;
+          y = rnd() * 2 - 1;
+          z = rnd() >= .5 ? -1 : 1;
         } else if(axis === 1) {
-          x = Math.random() * 2 - 1;
-          y = Math.random() >= .5 ? -1 : 1;
-          z = Math.random() * 2 - 1;
+          x = rnd() * 2 - 1;
+          y = rnd() >= .5 ? -1 : 1;
+          z = rnd() * 2 - 1;
         } else if(axis === 2) {
-          x = Math.random() >= .5 ? -1 : 1;
-          y = Math.random() * 2 - 1;
-          z = Math.random() * 2 - 1;
+          x = rnd() >= .5 ? -1 : 1;
+          y = rnd() * 2 - 1;
+          z = rnd() * 2 - 1;
         }
         this.cubeTempPos.push(
           x * CUBE_EDGE,
@@ -229,116 +229,29 @@ class App {
     }
 
     /****************************************
-    TestTubeGeo生成
-    */
-    const LOOP = 4;
-    // const All_ROUND = LOOP * 360;
-    const FACE_V = 4;
-    let cube2Arr = [];
-    // チューブ形状ねじれループ
-    for(let i = 0; i < LOOP; i++){
-      //切断面生成ループ
-      for(let j = 0; j < FACE_V; j++){
-        // 切断面半径 x,zラジアン角
-        //
-        // let increase = tickness / 2 * Math.sin(Math.PI / 180 * (surfaceSplit*j));
-        // //　頂点jの切断面の太さ分のバネ半径y値の増加
-        // let increaseY = tickness / 2 * Math.cos( Math.PI / 180 * (surfaceSplit*j));
-    //     // var x = (radius + increase) * Math.cos( Math.PI / 180 * i);
-    //     // var z = (radius+ increase) * Math.sin( Math.PI / 180 * i);
-    //     // var y = (i * zoukaY) + increaseY;
-    //     // geometry.vertices.push(new THREE.Vector3(x, y, z));
-      }
-    }
-    //  this.cubeDistPos =
-
-    // zは1辺を分割 x、zを面として扱う
-    this.cube2Pos = [
-      // 1つ目 上 黄
-      -0.5,  -.166,  1.5, // 左上
-       0.5,  -.166,  1.5, // 右上
-      -0.5,      0,  0.5, // 左下
-       0.5,      0,  0.5, // 右下
-
-      // 2つ目 真ん中 赤
-      -0.5, 0,  0.5, // 左上
-       0.5, 0,  0.5, // 右上
-      -0.5, 0, -0.5, // 左下
-       0.5, 0, -0.5, // 右下
-
-      // 3つ目 下 青
-      -0.5,     0, -0.5, // 左上
-       0.5,     0, -0.5, // 右上
-      -0.5, -.166, -1.5, // 左下
-       0.5, -.166, -1.5, // 右下
-
-    ];
-    this.cube2Color = [
-      0, 1.0, 1.0, 1.0,
-      0, 1.0, 1.0, 1.0,
-      0, 1.0, 1.0, 1.0,
-      0, 1.0, 1.0, 1.0,
-
-      1.0, 0.0, 1.0, 1.0,
-      1.0, 0.0, 1.0, 1.0,
-      1.0, 0.0, 1.0, 1.0,
-      1.0, 0.0, 1.0, 1.0,
-
-      1.0, 1.0, 0.0, 1.0,
-      1.0, 1.0, 0.0, 1.0,
-      1.0, 1.0, 0.0, 1.0,
-      1.0, 1.0, 0.0, 1.0,
-    ];
-    const v = 1.0 / Math.sqrt(3.0);
-    this.cube2Normal = [
-      -v, -v,  v,  v, -v,  v,  v,  v,  v, -v,  v,  v,
-      -v, -v, -v, -v,  v, -v,  v,  v, -v,  v, -v, -v,
-      -v,  v, -v, -v,  v,  v,  v,  v,  v,  v,  v, -v,
-      -v, -v, -v,  v, -v, -v,  v, -v,  v, -v, -v,  v,
-       v, -v, -v,  v,  v, -v,  v,  v,  v,  v, -v,  v,
-      -v, -v, -v, -v, -v,  v, -v,  v,  v, -v,  v, -v
-
-    ];
-    this.cube2Indices = [
-      0, 1,  2,  2, 1,  3, // 1
-      // 1, 5,  3,  3, 5,  7,
-      4, 5,  6,  6, 5,  7, // 2
-      8, 9, 10, 10, 9, 11, // 3
-    ];
-    /*
-    23 67
-    01 45
-    */
-    this.cube2VBO = [
-      WebGLUtility.createVBO(this.gl, this.cube2Pos),
-      WebGLUtility.createVBO(this.gl, this.cube2Normal),
-      WebGLUtility.createVBO(this.gl, this.cube2Color),
-    ];
-    this.cube2IBO = WebGLUtility.createIBO(this.gl, this.cube2Indices);
-
-    /****************************************
-    Wind
+    Wind Position, Scale & Color
     */
     {
-      // Position, Scale & Color
       this.windPosStep = 3;
       this.windSclStep = 3;
       this.windColStep = 4;
 
       const WIND_RADIUS = 1.5;
-      const X_RISE = .025;
+      const X_RISE = .005;
       const TWO_PI = Math.PI * 2;
       this.windTempPos = [];
       this.windTempRot = [];
       this.windTempScl = [];
       // this.windTempCol = [];
 
+      const rndScl = 8;
       for (let i = 0; i < this.pCount; i += 1) {
-        const xRot = Math.random() * TWO_PI;;
+        const xRot = rnd() * TWO_PI;;
         const xPos = (i * X_RISE) - ((X_RISE * this.pCount) / 2);
+        const tmpRnd = rnd(10);
         this.windTempPos.push(xPos, WIND_RADIUS, 0);
         this.windTempRot.push(xRot);
-        this.windTempScl.push(3, .1, 15);
+        this.windTempScl.push(tmpRnd, tmpRnd, tmpRnd);
       }
       this.windPositions = new Float32Array(this.windTempPos);
       this.windRotations = new Float32Array(this.windTempRot);
@@ -371,7 +284,7 @@ class App {
     // フレームバッファをバインドして描画の対象とする（Defaultは不要）
     // gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebufferArray[0].framebuffer);
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    gl.clearColor(0.3, 0.3, 0.3, 1.0);
+    gl.clearColor(0.1, 0.1, 0.1, 1);
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.useProgram(this.standardProgram);
@@ -397,33 +310,7 @@ class App {
     const p = m4.perspective(fovy, aspect, near, far);
     const vp = m4.multiply(p, v);
 
-    // cube2描画
-    {
-      this.setupStandardRendering();
-
-      WebGLUtility.enableBuffer(gl, this.cube2VBO, this.standardAttrLocation, this.standardAttrStride, this.cube2IBO);
-
-      let m;
-      for(let i = 0; i < this.pCount; i++) {
-        m = m4.identity();
-        m = m4.rotate(m, this.windRotations[i], v3.create(1, 0, 0));
-        m = m4.translate(m, v3.create(
-          this.windPositions[i * this.windPosStep + 0],
-          this.windPositions[i * this.windPosStep + 1],
-          this.windPositions[i * this.windPosStep + 2],
-        ));
-        const mvp = m4.multiply(vp, m);
-        const normalMatrix = m4.transpose(m4.inverse(m));
-
-        gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-        gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
-        gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-        gl.drawElements(gl.TRIANGLES, this.cube2Indices.length, gl.UNSIGNED_SHORT, 0);
-        // gl.drawArrays(gl.LINE_LOOP, 0, this.cube2Indices.length / 3);
-      }
-    }
-
-    // リボン描画
+    // ロール描画
     // {
     //   this.setupStandardRendering();
 
@@ -432,7 +319,7 @@ class App {
     //   let m;
     //   for(let i = 0; i < this.pCount; i++) {
     //     m = m4.identity();
-    //     // m = m4.rotate(m, this.currentTime, v3.create(1, 0, 0));
+    //     m = m4.rotate(m, this.currentTime, v3.create(1, 0, 0));
     //     m = m4.rotate(m, this.windRotations[i], v3.create(1, 0, 0));
     //     m = m4.translate(m, v3.create(
     //       this.windPositions[i * this.windPosStep + 0],
@@ -450,52 +337,52 @@ class App {
     //     gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
     //     gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
     //     gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-    //     // gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
-    //     gl.drawArrays(gl.LINE_STRIP, 0, this.cubeGeo.position.length / 3);
+    //     gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
+    //     // gl.drawArrays(gl.LINE_STRIP, 0, this.cubeGeo.position.length / 3);
     //   }
     // }
 
     // 立方体描画
-    // {
-    //   this.setupStandardRendering();
+    {
+      this.setupStandardRendering();
 
-    //   WebGLUtility.enableBuffer(gl, this.cubeVBO, this.standardAttrLocation, this.standardAttrStride, this.cubeIBO);
+      WebGLUtility.enableBuffer(gl, this.cubeVBO, this.standardAttrLocation, this.standardAttrStride, this.cubeIBO);
 
-    //   let m;
-    //   for(let i = 0; i < this.pCount; i++) {
-    //     m = m4.identity();
-    //     // m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
-    //     m = m4.translate(m, v3.create(
-    //       this.cubePositions[i * this.cubePosStep + 0],
-    //       this.cubePositions[i * this.cubePosStep + 1],
-    //       this.cubePositions[i * this.cubePosStep + 2],
-    //     ));
+      let m;
+      for(let i = 0; i < this.pCount; i++) {
+        m = m4.identity();
+        m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
+        m = m4.translate(m, v3.create(
+          this.cubePositions[i * this.cubePosStep + 0],
+          this.cubePositions[i * this.cubePosStep + 1],
+          this.cubePositions[i * this.cubePosStep + 2],
+        ));
 
-    //     const mvp = m4.multiply(vp, m);
-    //     const normalMatrix = m4.transpose(m4.inverse(m));
+        const mvp = m4.multiply(vp, m);
+        const normalMatrix = m4.transpose(m4.inverse(m));
 
-    //     gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-    //     gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
-    //     // gl.uniform3fv(
-    //     //   this.standardUniLocation.lightVector,
-    //     //   this.lightVector
-    //     // );
-    //     // gl.uniform4fv(this.standardUniLocation.ambientLight, [
-    //     //   this.ambientLight,
-    //     //   this.ambientLight,
-    //     //   this.ambientLight,
-    //     //   this.ambientLight
-    //     // ]);
-    //     // gl.uniform4fv(this.standardUniLocation.ballColor, [
-    //     //   this.ballColors[i * this.ballColorStep + 0],
-    //     //   this.ballColors[i * this.ballColorStep + 1],
-    //     //   this.ballColors[i * this.ballColorStep + 2],
-    //     //   1.0
-    //     // ]);
-    //     gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-    //     gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
-    //   }
-    // }
+        gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
+        gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
+        // gl.uniform3fv(
+        //   this.standardUniLocation.lightVector,
+        //   this.lightVector
+        // );
+        // gl.uniform4fv(this.standardUniLocation.ambientLight, [
+        //   this.ambientLight,
+        //   this.ambientLight,
+        //   this.ambientLight,
+        //   this.ambientLight
+        // ]);
+        // gl.uniform4fv(this.standardUniLocation.ballColor, [
+        //   this.ballColors[i * this.ballColorStep + 0],
+        //   this.ballColors[i * this.ballColorStep + 1],
+        //   this.ballColors[i * this.ballColorStep + 2],
+        //   1.0
+        // ]);
+        gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
+        gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
+      }
+    }
 
     // 球体描画
     // {
@@ -506,7 +393,7 @@ class App {
     //   let m;
     //   for(let i = 0; i < this.pCount; i++) {
     //     m = m4.identity();
-    //     // m = m4.rotate(m, this.currentTime * timeScale, v3.create(1.0, 1.0, 1.0));
+    //     m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
     //     m = m4.translate(m, v3.create(
     //       this.ballPositions[i * this.ballPosStep + 0],
     //       this.ballPositions[i * this.ballPosStep + 1],
