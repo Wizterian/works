@@ -1,21 +1,36 @@
 
-attribute vec3 position;
-attribute vec3 normal;
-attribute vec4 color;
+attribute vec3 positionA;
+attribute vec3 normalA;
+// attribute vec4 colorA;
 
-uniform mat4 mvpMatrix;
+attribute vec3 positionB;
+attribute vec3 normalB;
+// attribute vec4 colorB;
+
+// uniform mat4 mvpMatrix;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 uniform mat4 normalMatrix;
-uniform float time;
 // uniform vec3 lightVector;
 // uniform vec4 ambientLight;
 // uniform int normalVisibility;
+uniform float time;
+uniform float ratio;
+uniform vec4 csColorA;
+uniform vec4 csColorB;
 
 varying vec4 vColor;
 
 void main(){
   // to Escape Warning
   normalMatrix;
-  normal;
+  // positionA;
+  normalA;
+  // colorA;
+  // positionB;
+  normalB;
+  // colorB;
 
   // vec3 n = (normalMatrix * vec4(normal, 0.0)).xyz;
   /************************************
@@ -26,14 +41,23 @@ void main(){
   // float d = clamp(dot(normalize(n), normalize(lightVector)), 0.5, 1.0); // no light vec
 
   // 内積の結果を頂点カラーのRGB成分に乗算する
-  // vColor = vec4(color.rgb * d, color.a) + ambientLight; // no ambient light
+  // vColor = vec4(colorA.rgb * d, colorA.a) + ambientLight; // no ambient light
 
   // new line
-  vColor = vec4(color.rgb, color.a);
 
-  float s = sin(time + position.y);
-  vec3 newPos = position + vec3(0., s, 0.);
+  // Color
+  vColor = mix(csColorA, csColorB, ratio);
+  // vColor = vec4(1., 1., ratio, 1.);
+  // vColor = colorA;
+
+  // 座標MIX
+  vec3 interpolated = mix(positionA, positionB, ratio);
+  // Y 座標に応じて波打つような変形処理を行うためにサインの値を算出
+  float s = sin(time + interpolated.y) * .1;
+  vec3 p = interpolated + normalize(interpolated) * s;
+
+  mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
   // 座標変換
-  gl_Position = mvpMatrix * vec4(position, 1.0);
+  gl_Position = mvpMatrix * vec4(interpolated, 1.0);
 }

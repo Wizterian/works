@@ -8,4 +8,3 @@ void main(){
   // gl_FragColor = ballColor * vColor;
   gl_FragColor = vColor;
 }
-
