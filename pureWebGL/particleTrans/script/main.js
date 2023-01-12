@@ -34,9 +34,17 @@ class App {
     // this.ambientLight = 0.0;
     // this.lightVector = new Float32Array([0.0, 0.0, 1.0]);
 
-    this.transNumNow = 0;
-    this.transNumMax = 3;
-    this.transInterval = 2;
+    this.transCountNow = 1;
+    this.transCountMax = 3;
+    this.transCountInterval = 2;
+
+    this.transStrength_1 = {value: 1};
+    this.transStrength_2 = {value: 0};
+    this.transStrength_3 = {value: 0};
+    this.transConfig = [
+      {duration: 1, ease: 'power2.inOut', value : 1.},
+      {duration: 1, ease: 'none', value : 0.},
+    ]
   }
 
   init() {
@@ -134,6 +142,7 @@ class App {
     const pSize = 1 / 100;
     this.csGeoA = this.cubicSphere(pSeg, pSeg, pSize, [1, 1, 0, 1]);
     this.csGeoB = this.cubicSphere(pSeg, pSeg, pSize, [1, 0, 1, 1]);
+    this.csGeoC = this.cubicSphere(pSeg, pSeg, pSize, [0, 1, 1, 1]);
 
     // Ball Geo
     {
@@ -180,9 +189,7 @@ class App {
       const tmpScl = rnd(3);
       csTmpScales.push(tmpScl, tmpScl, tmpScl);
     }
-
     this.csScales = new Float32Array(this.csTmpScales);
-
 
     // Sphere
     {
@@ -301,6 +308,9 @@ class App {
       WebGLUtility.createVBO(this.gl, this.csGeoB.position),
       WebGLUtility.createVBO(this.gl, this.csGeoB.normal),
       // WebGLUtility.createVBO(this.gl, this.csGeoB.color),
+      WebGLUtility.createVBO(this.gl, this.csGeoC.position),
+      WebGLUtility.createVBO(this.gl, this.csGeoC.normal),
+      // WebGLUtility.createVBO(this.gl, this.csGeoC.color),
     ];
     this.csGeoIBO = WebGLUtility.createIBO(this.gl, this.csGeoA.index);
   }
@@ -314,23 +324,52 @@ class App {
       gl.getAttribLocation(this.standardProgram, 'positionB'),
       gl.getAttribLocation(this.standardProgram, 'normalB'),
       // gl.getAttribLocation(this.standardProgram, 'colorB'),
+      gl.getAttribLocation(this.standardProgram, 'positionC'),
+      gl.getAttribLocation(this.standardProgram, 'normalC'),
+      // gl.getAttribLocation(this.standardProgram, 'colorB'),
     ];
     this.standardAttrStride = [
+      3, 3,
       3, 3,
       3, 3,
     ];
     this.standardUniLocation = {
       // mvpMatrix: gl.getUniformLocation(this.standardProgram, 'mvpMatrix'),
-      modelMatrix: gl.getUniformLocation(this.standardProgram, 'modelMatrix'),
-      viewMatrix: gl.getUniformLocation(this.standardProgram, 'viewMatrix'),
-      projectionMatrix: gl.getUniformLocation(this.standardProgram, 'projectionMatrix'),
-      normalMatrix: gl.getUniformLocation(this.standardProgram, 'normalMatrix'), // 法線変換
-      // ambientLight: gl.getUniformLocation(this.standardProgram, 'ambientLight'), // 環境光
-      // cubeColorA: gl.getUniformLocation(this.standardProgram, 'cubeColorA'), // ライトベクトル
-      csColorA: gl.getUniformLocation(this.standardProgram, 'csColorA'), // パーティクル色A
-      csColorB: gl.getUniformLocation(this.standardProgram, 'csColorB'), // パーティクル色B
+      modelMatrix: gl.getUniformLocation(
+        this.standardProgram, 'modelMatrix'
+      ),
+      viewMatrix: gl.getUniformLocation(
+        this.standardProgram, 'viewMatrix'
+      ),
+      projectionMatrix: gl.getUniformLocation(
+        this.standardProgram, 'projectionMatrix'
+      ),
+      normalMatrix: gl.getUniformLocation(
+        this.standardProgram, 'normalMatrix'
+      ), // 法線変換
+      // ambientLight: gl.getUniformLocation(
+      //   this.standardProgram, 'ambientLight'
+      // ), // 環境光
+      // cubeColorA: gl.getUniformLocation(
+      //   this.standardProgram, 'cubeColorA'
+      // ), // ライトベクトル
+      csColorA: gl.getUniformLocation(
+        this.standardProgram, 'csColorA'
+      ), // パーティクル色A
+      csColorB: gl.getUniformLocation(
+        this.standardProgram, 'csColorB'
+      ), // パーティクル色B
       time: gl.getUniformLocation(this.standardProgram, 'time'),
-      ratio: gl.getUniformLocation(this.standardProgram, 'ratio'), // MIX割合
+      ratio: gl.getUniformLocation(this.standardProgram, 'ratio'), // MIX比
+      transStrength_1: gl.getUniformLocation(
+        this.standardProgram, 'transStrength_1'
+      ),
+      transStrength_2: gl.getUniformLocation(
+        this.standardProgram, 'transStrength_2'
+      ),
+      transStrength_3: gl.getUniformLocation(
+        this.standardProgram, 'transStrength_3'
+      ),
     };
   }
 
@@ -365,6 +404,7 @@ class App {
     this.startTime = Date.now();
     this.isRender = true; // shader、geo、uniform準備後renderループ開始
     this.render();
+    this.autoPlay();
   }
 
   render() {
@@ -394,6 +434,11 @@ class App {
 
       let m;
       for(let i = 0; i < this.pCount; i++) {
+
+        /****************************************
+        Move
+        */
+
         m = m4.identity();
         m = m4.rotate(m, this.currentTime * timeScale, v3.create(1, 0, 0));
         m = m4.rotate(m, this.rollRotations[i], v3.create(1, 0, 0));
@@ -425,11 +470,18 @@ class App {
         // const mvp = m4.multiply(vp, m);
         const normalMatrix = m4.transpose(m4.inverse(m));
 
+        /****************************************
+        Uniform Transfer
+        */
+
+        // MVP
         // gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
         gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix, false, m);
         gl.uniformMatrix4fv(this.standardUniLocation.viewMatrix, false, v);
         gl.uniformMatrix4fv(this.standardUniLocation.projectionMatrix, false, p);
+        // Normal
         gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
+        // Color
         gl.uniform4fv(this.standardUniLocation.csColorA, [
           this.csColorsA[i * this.csColorStep + 0],
           this.csColorsA[i * this.csColorStep + 1],
@@ -442,144 +494,79 @@ class App {
           this.csColorsB[i * this.csColorStep + 2],
           1.0
         ]);
-        gl.uniform1f(this.standardUniLocation.time, this.currentTime); // 1f型に第2引数booleanは不要
-        gl.uniform1f(this.standardUniLocation.ratio, this.localPositionRatio);
+        // Time
+        gl.uniform1f(this.standardUniLocation.time, this.currentTime); // 1fに第2引数不要
+        gl.uniform1f(this.standardUniLocation.ratio, this.localPositionRatio); // テスト用 tweakPane, vert ratio削除
+        // Mix Strength
+        gl.uniform1f(
+          this.standardUniLocation.transStrength_1,
+          this.transStrength_1.value
+        );
+        gl.uniform1f(
+          this.standardUniLocation.transStrength_2,
+          this.transStrength_2.value
+        );
+        gl.uniform1f(
+          this.standardUniLocation.transStrength_3,
+          this.transStrength_3.value
+        );
 
         gl.drawElements(gl.TRIANGLES, this.csGeoA.index.length, gl.UNSIGNED_SHORT, 0);
         // gl.drawArrays(gl.LINE_LOOP, 0, this.csGeoA.position.length / 3);
         // gl.drawArrays(gl.POINTS, 0, this.csGeoA.position.length / 3);
       }
     }
-
-    // ロール描画
-    // {
-    //   this.setupStandardRendering();
-
-    //   WebGLUtility.enableBuffer(gl, this.cubeGeoVBO, this.standardAttrLocation, this.standardAttrStride, this.cubeGeoIBO);
-
-    //   let m;
-    //   for(let i = 0; i < this.pCount; i++) {
-    //     m = m4.identity();
-    //     m = m4.rotate(m, this.currentTime, v3.create(1, 0, 0));
-    //     m = m4.rotate(m, this.rollRotations[i], v3.create(1, 0, 0));
-    //     m = m4.translate(m, v3.create(
-    //       this.rollPositions[i * this.rollPosStep + 0],
-    //       this.rollPositions[i * this.rollPosStep + 1],
-    //       this.rollPositions[i * this.rollPosStep + 2],
-    //     ));
-    //     m = m4.scale(m, v3.create(
-    //       this.rollScales[i * this.rollSclStep + 0],
-    //       this.rollScales[i * this.rollSclStep + 1],
-    //       this.rollScales[i * this.rollSclStep + 2],
-    //     ));
-    //     const mvp = m4.multiply(vp, m);
-    //     const normalMatrix = m4.transpose(m4.inverse(m));
-
-    //     gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-    //     gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
-    //     gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-    //     gl.drawElements(gl.TRIANGLES, this.cubeGeo.index.length, gl.UNSIGNED_SHORT, 0);
-    //     // gl.drawArrays(gl.LINE_STRIP, 0, this.cubeGeo.position.length / 3);
-    //   }
-    // }
-
-    // 立方体描画
-    // {
-    //   this.setupStandardRendering();
-
-    //   WebGLUtility.enableBuffer(gl, this.ballGeoVBO, this.standardAttrLocation, this.standardAttrStride, this.ballGeoIBO);
-
-    //   let m;
-    //   for(let i = 0; i < this.pCount; i++) {
-    //     m = m4.identity();
-    //     // m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
-    //     m = m4.translate(m, v3.create(
-    //       this.cubePositions[i * this.cubePosStep + 0],
-    //       this.cubePositions[i * this.cubePosStep + 1],
-    //       this.cubePositions[i * this.cubePosStep + 2],
-    //     ));
-
-    //     const mvp = m4.multiply(vp, m);
-    //     const normalMatrix = m4.transpose(m4.inverse(m));
-
-    //     gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-    //     gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
-    //     // gl.uniform3fv(
-    //     //   this.standardUniLocation.lightVector,
-    //     //   this.lightVector
-    //     // );
-    //     // gl.uniform4fv(this.standardUniLocation.ambientLight, [
-    //     //   this.ambientLight,
-    //     //   this.ambientLight,
-    //     //   this.ambientLight,
-    //     //   this.ambientLight
-    //     // ]);
-    //     // gl.uniform4fv(this.standardUniLocation.ballColor, [
-    //     //   this.ballColors[i * this.ballColorStep + 0],
-    //     //   this.ballColors[i * this.ballColorStep + 1],
-    //     //   this.ballColors[i * this.ballColorStep + 2],
-    //     //   1.0
-    //     // ]);
-    //     gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-    //     gl.drawElements(gl.TRIANGLES, this.ballGeo.index.length, gl.UNSIGNED_SHORT, 0);
-    //   }
-    // }
-
-    // 球体描画
-    // {
-    //   this.setupStandardRendering();
-
-    //   WebGLUtility.enableBuffer(gl, this.ballGeoVBO, this.standardAttrLocation, this.standardAttrStride, this.ballGeoIBO);
-
-    //   let m;
-    //   for(let i = 0; i < this.pCount; i++) {
-    //     m = m4.identity();
-    //     // m = m4.rotate(m, this.currentTime, v3.create(1.0, 1.0, 1.0));
-    //     m = m4.translate(m, v3.create(
-    //       this.ballPositions[i * this.ballPosStep + 0],
-    //       this.ballPositions[i * this.ballPosStep + 1],
-    //       this.ballPositions[i * this.ballPosStep + 2],
-    //     ));
-
-    //     const mvp = m4.multiply(vp, m);
-    //     const normalMatrix = m4.transpose(m4.inverse(m));
-
-    //     gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-    //     gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
-    //     // gl.uniform3fv(
-    //     //   this.standardUniLocation.lightVector,
-    //     //   this.lightVector
-    //     // );
-    //     // gl.uniform4fv(this.standardUniLocation.ambientLight, [
-    //     //   this.ambientLight,
-    //     //   this.ambientLight,
-    //     //   this.ambientLight,
-    //     //   this.ambientLight
-    //     // ]);
-    //     // gl.uniform4fv(this.standardUniLocation.ballColor, [
-    //     //   this.ballColors[i * this.ballColorStep + 0],
-    //     //   this.ballColors[i * this.ballColorStep + 1],
-    //     //   this.ballColors[i * this.ballColorStep + 2],
-    //     //   1.0
-    //     // ]);
-    // gl.uniform1f(this.standardUniLocation.time, false, this.currentTime);
-    //     gl.drawElements(gl.TRIANGLES, this.ballGeo.index.length, gl.UNSIGNED_SHORT, 0);
-    //   }
-    // }
   }
 
-  // n秒毎にトランジション番号++
+  transStrength(num) {
+    let tmpTrConf = num === 1 ? this.transConfig[0] : this.transConfig[1];
+
+    // repeatだとSeamlessに動かない？
+    tmpTrConf = num === 1 ? this.transConfig[0] : this.transConfig[1];
+    gsap.to(this.transStrength_1, tmpTrConf);
+
+    tmpTrConf = num === 2 ? this.transConfig[0] : this.transConfig[1];
+    gsap.to(this.transStrength_2, tmpTrConf);
+
+    tmpTrConf = num === 3 ? this.transConfig[0] : this.transConfig[1];
+    gsap.to(this.transStrength_3, tmpTrConf);
+
+    console.log(this.transStrength_1, this.transStrength_2, this.transStrength_3);
+
+    // gsap.to(this.currentColor, {
+    //   duration: this.duration,
+    //   ease: "power2.inOut",
+    //   value: this.colorPallet.x });
+  }
+
+  // Transitioning Number Count Up
   autoPlay(t) {
-    if(Math.floor(t) % this.transInterval === 0){
-      if(this.countFlg === true) {
-        if (this.transNumNow > this.transNumMax) this.transNumNow = 0;
-        else this.transNumNow++;
-        this.countFlg = false;
+    if(Math.floor(t) % this.transCountInterval === 0){
+      if(this.countFlg) {
+        if (this.transCountNow >= this.transCountMax) this.transCountNow = 1;
+        else this.transCountNow++;
+        this.transStrength(this.transCountNow);
+        this.countFlg = !this.countFlg;
       }
     } else {
       this.countFlg = true;
     }
   }
+
+  // autoplay with GSAP
+  // autoPlay() {
+  //   gsap.
+  //     to({}, {
+  //       duration: this.transCountInterval,
+  //       repeat: -1,
+  //       ease: 'none',
+  //       onRepeat: () => {
+  //         if (this.transCountNow >= this.transCountMax) this.transCountNow = 1;
+  //         else this.transCountNow++;
+  //         this.transStrength(this.transCountNow);
+  //       },
+  //     })
+  // };
 
   /****************************************
   Utilities

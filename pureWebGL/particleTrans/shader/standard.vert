@@ -7,6 +7,10 @@ attribute vec3 positionB;
 attribute vec3 normalB;
 // attribute vec4 colorB;
 
+attribute vec3 positionC;
+attribute vec3 normalC;
+// attribute vec4 colorB;
+
 // uniform mat4 mvpMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -14,11 +18,15 @@ uniform mat4 projectionMatrix;
 uniform mat4 normalMatrix;
 // uniform vec3 lightVector;
 // uniform vec4 ambientLight;
-// uniform int normalVisibility;
-uniform float time;
-uniform float ratio;
 uniform vec4 csColorA;
 uniform vec4 csColorB;
+uniform float time;
+uniform float ratio;
+
+// Mix Strength
+uniform float transStrength_1;
+uniform float transStrength_2;
+uniform float transStrength_3;
 
 varying vec4 vColor;
 
@@ -31,6 +39,9 @@ void main(){
   // positionB;
   normalB;
   // colorB;
+  // positionC;
+  normalC;
+  // colorC;
 
   // vec3 n = (normalMatrix * vec4(normal, 0.0)).xyz;
   /************************************
@@ -43,7 +54,14 @@ void main(){
   // 内積の結果を頂点カラーのRGB成分に乗算する
   // vColor = vec4(colorA.rgb * d, colorA.a) + ambientLight; // no ambient light
 
-  // new line
+  // new new line ------------------------------
+
+  vec3 newPosA = positionA * transStrength_1;
+  vec3 newPosB = positionB * transStrength_2;
+  vec3 newPosC = positionC * transStrength_3;
+  vec3 newPosFin = newPosA + newPosB + newPosC;
+
+  // new line ------------------------------
 
   // Color
   vColor = mix(csColorA, csColorB, ratio);
@@ -59,5 +77,6 @@ void main(){
   mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
   // 座標変換
-  gl_Position = mvpMatrix * vec4(interpolated, 1.0);
+  // gl_Position = mvpMatrix * vec4(interpolated, 1.0);
+  gl_Position = mvpMatrix * vec4(newPosFin, 1.0);
 }
