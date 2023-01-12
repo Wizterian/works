@@ -12,14 +12,17 @@ attribute vec3 normalC;
 // attribute vec4 colorB;
 
 // uniform mat4 mvpMatrix;
-uniform mat4 modelMatrix;
+uniform mat4 modelMatrix_1;
+uniform mat4 modelMatrix_2;
+uniform mat4 modelMatrix_3;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 normalMatrix;
 // uniform vec3 lightVector;
 // uniform vec4 ambientLight;
-uniform vec4 csColorA;
-uniform vec4 csColorB;
+uniform vec4 csColor_1;
+uniform vec4 csColor_2;
+uniform vec4 csColor_3;
 uniform float time;
 uniform float ratio;
 
@@ -56,15 +59,27 @@ void main(){
 
   // new new line ------------------------------
 
+  // Mix
   vec3 newPosA = positionA * transStrength_1;
   vec3 newPosB = positionB * transStrength_2;
   vec3 newPosC = positionC * transStrength_3;
   vec3 newPosFin = newPosA + newPosB + newPosC;
 
+  mat4 newModel_1 = modelMatrix_1 * transStrength_1;
+  mat4 newModel_2 = modelMatrix_2 * transStrength_2;
+  mat4 newModel_3 = modelMatrix_3 * transStrength_3;
+  mat4 newModelMat = newModel_1 + newModel_2 + newModel_3;
+
+  vec4 newColor_1 = csColor_1 * transStrength_1;
+  vec4 newColor_2 = csColor_2 * transStrength_2;
+  vec4 newColor_3 = csColor_3 * transStrength_3;
+  vec4 newColor = newColor_1 + newColor_2 + newColor_3;
+
   // new line ------------------------------
 
   // Color
-  vColor = mix(csColorA, csColorB, ratio);
+  vColor = newColor;
+  // vColor = mix(csColorA, csColorB, ratio);
   // vColor = vec4(1., 1., ratio, 1.);
   // vColor = colorA;
 
@@ -74,7 +89,7 @@ void main(){
   float s = sin(time + interpolated.y) * .1;
   vec3 p = interpolated + normalize(interpolated) * s;
 
-  mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+  mat4 mvpMatrix = projectionMatrix * viewMatrix * newModelMat;
 
   // 座標変換
   // gl_Position = mvpMatrix * vec4(interpolated, 1.0);

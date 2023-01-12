@@ -16,6 +16,7 @@ window.addEventListener('DOMContentLoaded', () => {
       app.debugSetting();
       app.setupLocation();
       app.start();
+      app.testFn();
     }
   );
 }, false);
@@ -41,11 +42,24 @@ class App {
     this.transStrength_1 = {value: 1};
     this.transStrength_2 = {value: 0};
     this.transStrength_3 = {value: 0};
+    this.transStrength_test = {value: 0};
+    this.transDur = 1.5;
     this.transConfig = [
-      {duration: 1, ease: 'power2.inOut', value : 1.},
-      {duration: 1, ease: 'none', value : 0.},
+      {duration: this.transDur, ease: 'power4.inOut', value : 0},
+      {duration: this.transDur, ease: 'power4.inOut', value : 1},
     ]
   }
+
+  // .to(this.transStrength_test, {
+  //   duration: .5 / 2,
+  //   ease: 'power4.inOut',
+  //   value : 1.
+  // })
+  // .to(this.transStrength_test, {
+  //   duration: .5 / 2,
+  //   ease: 'power4.inOut',
+  //   value : 0.
+  // })
 
   init() {
     // Canvas
@@ -131,15 +145,15 @@ class App {
     　r×r×r×π×4÷3
     */
 
-    this.pCount = 1000;
+    this.pCount = 5000;
 
     /****************************************
     Geometry (Local Coord.)
     */
 
     // cubicSphere Geo
-    const pSeg = 15;
-    const pSize = 1 / 100;
+    const pSeg = 10;
+    const pSize = 1 / 120;
     this.csGeoA = this.cubicSphere(pSeg, pSeg, pSize, [1, 1, 0, 1]);
     this.csGeoB = this.cubicSphere(pSeg, pSeg, pSize, [1, 0, 1, 1]);
     this.csGeoC = this.cubicSphere(pSeg, pSeg, pSize, [0, 1, 1, 1]);
@@ -172,19 +186,25 @@ class App {
 
     // cubicSphere
     this.csColorStep = 3;
-    this.csColorsA = [];
-    this.csColorsB = [];
+    this.csColors_1 = [];
+    this.csColors_2 = [];
+    this.csColors_3 = [];
     const csTmpScales = [];
     for(let i = 0; i < this.pCount; i++) {
-      let tmpRgb = hslToRgb((Math.random() * 90) + 45, 75, 50);
-      this.csColorsA[i * this.csColorStep + 0] = tmpRgb.r;
-      this.csColorsA[i * this.csColorStep + 1] = tmpRgb.g;
-      this.csColorsA[i * this.csColorStep + 2] = tmpRgb.b;
+      let tmpRgb = hslToRgb((Math.random() * 90) + 315, 80, 50);
+      this.csColors_1[i * this.csColorStep + 0] = tmpRgb.r;
+      this.csColors_1[i * this.csColorStep + 1] = tmpRgb.g;
+      this.csColors_1[i * this.csColorStep + 2] = tmpRgb.b;
 
-      tmpRgb = hslToRgb((Math.random() * 90) + (45 + 180), 75, 50);
-      this.csColorsB[i * this.csColorStep + 0] = tmpRgb.r;
-      this.csColorsB[i * this.csColorStep + 1] = tmpRgb.g;
-      this.csColorsB[i * this.csColorStep + 2] = tmpRgb.b;
+      tmpRgb = hslToRgb((Math.random() * 90) + (315 + 120), 80, 50);
+      this.csColors_2[i * this.csColorStep + 0] = tmpRgb.r;
+      this.csColors_2[i * this.csColorStep + 1] = tmpRgb.g;
+      this.csColors_2[i * this.csColorStep + 2] = tmpRgb.b;
+
+      tmpRgb = hslToRgb((Math.random() * 90) + (315 + 240), 80, 50);
+      this.csColors_3[i * this.csColorStep + 0] = tmpRgb.r;
+      this.csColors_3[i * this.csColorStep + 1] = tmpRgb.g;
+      this.csColors_3[i * this.csColorStep + 2] = tmpRgb.b;
 
       const tmpScl = rnd(3);
       csTmpScales.push(tmpScl, tmpScl, tmpScl);
@@ -274,7 +294,7 @@ class App {
       this.rollColStep = 4;
       this.rollSclStep = 3;
       const WIND_RADIUS = 1.5;
-      const X_RISE = .005;
+      const Z_RISE = .0075;
       const TWO_PI = Math.PI * 2;
       this.rollTempPos = [];
       this.rollTempRot = [];
@@ -282,11 +302,11 @@ class App {
       this.rollTempScl = [];
 
       for (let i = 0; i < this.pCount; i += 1) {
-        const xRot = rnd() * TWO_PI;;
-        const xPos = (i * X_RISE) - ((X_RISE * this.pCount) / 2);
-        const tmpRnd = rnd(5);
-        this.rollTempPos.push(xPos, WIND_RADIUS, 0);
-        this.rollTempRot.push(xRot);
+        const zRot = rnd() * TWO_PI;;
+        const zPos = (i * Z_RISE) - ((Z_RISE * this.pCount) / 2);
+        const tmpRnd = rnd(12);
+        this.rollTempPos.push(0, WIND_RADIUS, zPos);
+        this.rollTempRot.push(zRot);
         this.rollTempCol.push(rnd(), rnd(), rnd(), 1);
         this.rollTempScl.push(tmpRnd, tmpRnd, tmpRnd);
       }
@@ -335,8 +355,14 @@ class App {
     ];
     this.standardUniLocation = {
       // mvpMatrix: gl.getUniformLocation(this.standardProgram, 'mvpMatrix'),
-      modelMatrix: gl.getUniformLocation(
-        this.standardProgram, 'modelMatrix'
+      modelMatrix_1: gl.getUniformLocation(
+        this.standardProgram, 'modelMatrix_1'
+      ),
+      modelMatrix_2: gl.getUniformLocation(
+        this.standardProgram, 'modelMatrix_2'
+      ),
+      modelMatrix_3: gl.getUniformLocation(
+        this.standardProgram, 'modelMatrix_3'
       ),
       viewMatrix: gl.getUniformLocation(
         this.standardProgram, 'viewMatrix'
@@ -353,14 +379,17 @@ class App {
       // cubeColorA: gl.getUniformLocation(
       //   this.standardProgram, 'cubeColorA'
       // ), // ライトベクトル
-      csColorA: gl.getUniformLocation(
-        this.standardProgram, 'csColorA'
+      csColor_1: gl.getUniformLocation(
+        this.standardProgram, 'csColor_1'
       ), // パーティクル色A
-      csColorB: gl.getUniformLocation(
-        this.standardProgram, 'csColorB'
+      csColor_2: gl.getUniformLocation(
+        this.standardProgram, 'csColor_2'
       ), // パーティクル色B
+      csColor_3: gl.getUniformLocation(
+        this.standardProgram, 'csColor_3'
+      ), // パーティクル色C
       time: gl.getUniformLocation(this.standardProgram, 'time'),
-      ratio: gl.getUniformLocation(this.standardProgram, 'ratio'), // MIX比
+      ratio: gl.getUniformLocation(this.standardProgram, 'ratio'), // MIX比 後で消す
       transStrength_1: gl.getUniformLocation(
         this.standardProgram, 'transStrength_1'
       ),
@@ -407,7 +436,25 @@ class App {
     this.autoPlay();
   }
 
+  testFn() {
+    return;
+    const tl = gsap.timeline();
+    tl
+      .to(this.transStrength_test, {
+        duration: .5 / 2,
+        ease: 'power4.inOut',
+        value : 1.
+      })
+      .to(this.transStrength_test, {
+        duration: .5 / 2,
+        ease: 'power4.inOut',
+        value : 0.
+      })
+  }
+
   render() {
+    // console.log(this.transStrength_test.value);
+
     // Initial Settings
     const gl = this.gl;
     if (this.isRender === true) requestAnimationFrame(this.render);
@@ -432,66 +479,79 @@ class App {
       // Attributes
       WebGLUtility.enableBuffer(gl, this.csGeoVBO, this.standardAttrLocation, this.standardAttrStride, this.csGeoIBO);
 
-      let m;
+      let m_1, m_2, m_3;
       for(let i = 0; i < this.pCount; i++) {
 
-        /****************************************
-        Move
-        */
+        // Spherical Formation
+        m_1 = m4.identity();
+        m_1 = m4.rotate(m_1, this.currentTime * timeScale, v3.create(1, 1, 0));
+        m_1 = m4.translate(m_1, v3.create(
+          this.ballPositions[i * this.ballPosStep + 0],
+          this.ballPositions[i * this.ballPosStep + 1],
+          this.ballPositions[i * this.ballPosStep + 2],
+        ));
 
-        m = m4.identity();
-        m = m4.rotate(m, this.currentTime * timeScale, v3.create(1, 0, 0));
-        m = m4.rotate(m, this.rollRotations[i], v3.create(1, 0, 0));
-
-        // roll
-        m = m4.translate(m, v3.create(
+        // Rolling Formation
+        m_2 = m4.identity();
+        m_2 = m4.rotate(m_2, this.currentTime, v3.create(0, 0, 1));
+        m_2 = m4.rotate(m_2, this.rollRotations[i], v3.create(0, 0, 1));
+        m_2 = m4.translate(m_2, v3.create(
           this.rollPositions[i * this.rollPosStep + 0],
           this.rollPositions[i * this.rollPosStep + 1],
           this.rollPositions[i * this.rollPosStep + 2],
         ));
-        // // Cubic
-        // m = m4.translate(m, v3.create(
-        //   this.cubePositions[i * this.cubePosStep + 0],
-        //   this.cubePositions[i * this.cubePosStep + 1],
-        //   this.cubePositions[i * this.cubePosStep + 2],
-        // ));
-        // // Spherical
-        // m = m4.translate(m, v3.create(
-        //   this.ballPositions[i * this.ballPosStep + 0],
-        //   this.ballPositions[i * this.ballPosStep + 1],
-        //   this.ballPositions[i * this.ballPosStep + 2],
-        // ));
-
-        m = m4.scale(m, v3.create(
+        m_2 = m4.scale(m_2, v3.create(
           this.rollScales[i * this.rollSclStep + 0],
           this.rollScales[i * this.rollSclStep + 1],
           this.rollScales[i * this.rollSclStep + 2],
         ));
-        // const mvp = m4.multiply(vp, m);
-        const normalMatrix = m4.transpose(m4.inverse(m));
+
+        // Cubic Formation
+        m_3 = m4.identity();
+        m_3 = m4.rotate(m_3, this.currentTime * timeScale, v3.create(1, 0, 1));
+        m_3 = m4.translate(m_3, v3.create(
+          this.cubePositions[i * this.cubePosStep + 0],
+          this.cubePositions[i * this.cubePosStep + 1],
+          this.cubePositions[i * this.cubePosStep + 2],
+        ));
+
+        // MVP Matrix
+        // const mvp = m4.multiply(vp, m_1);
+
+        // Normal 複数ある場合切り替え？
+        const normalMatrix = m4.transpose(m4.inverse(m_1));
 
         /****************************************
         Uniform Transfer
         */
 
-        // MVP
+        // Model
         // gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix, false, m);
+        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_1, false, m_1);
+        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_2, false, m_2);
+        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_3, false, m_3);
+        // View & Proj.
         gl.uniformMatrix4fv(this.standardUniLocation.viewMatrix, false, v);
         gl.uniformMatrix4fv(this.standardUniLocation.projectionMatrix, false, p);
         // Normal
         gl.uniformMatrix4fv(this.standardUniLocation.normalMatrix, false, normalMatrix);
         // Color
-        gl.uniform4fv(this.standardUniLocation.csColorA, [
-          this.csColorsA[i * this.csColorStep + 0],
-          this.csColorsA[i * this.csColorStep + 1],
-          this.csColorsA[i * this.csColorStep + 2],
+        gl.uniform4fv(this.standardUniLocation.csColor_1, [
+          this.csColors_1[i * this.csColorStep + 0],
+          this.csColors_1[i * this.csColorStep + 1],
+          this.csColors_1[i * this.csColorStep + 2],
           1.0
         ]);
-        gl.uniform4fv(this.standardUniLocation.csColorB, [
-          this.csColorsB[i * this.csColorStep + 0],
-          this.csColorsB[i * this.csColorStep + 1],
-          this.csColorsB[i * this.csColorStep + 2],
+        gl.uniform4fv(this.standardUniLocation.csColor_2, [
+          this.csColors_2[i * this.csColorStep + 0],
+          this.csColors_2[i * this.csColorStep + 1],
+          this.csColors_2[i * this.csColorStep + 2],
+          1.0
+        ]);
+        gl.uniform4fv(this.standardUniLocation.csColor_3, [
+          this.csColors_3[i * this.csColorStep + 0],
+          this.csColors_3[i * this.csColorStep + 1],
+          this.csColors_3[i * this.csColorStep + 2],
           1.0
         ]);
         // Time
@@ -518,30 +578,57 @@ class App {
     }
   }
 
+  // 'num' matches model matrix index (ex. modelMatrix_1)
   transStrength(num) {
-    let tmpTrConf = num === 1 ? this.transConfig[0] : this.transConfig[1];
+    let tmpTrConf;
 
-    // repeatだとSeamlessに動かない？
-    tmpTrConf = num === 1 ? this.transConfig[0] : this.transConfig[1];
+    tmpTrConf = num === 1 ? this.transConfig[1] : this.transConfig[0];
     gsap.to(this.transStrength_1, tmpTrConf);
 
-    tmpTrConf = num === 2 ? this.transConfig[0] : this.transConfig[1];
+    tmpTrConf = num === 2 ? this.transConfig[1] : this.transConfig[0];
     gsap.to(this.transStrength_2, tmpTrConf);
 
-    tmpTrConf = num === 3 ? this.transConfig[0] : this.transConfig[1];
+    // if(num === 2) {
+    //   let gsapOp = {...this.transConfig[1]};
+    //   // gsapOp.duration = gsapOp.duration / 2;
+    //   gsapOp.onComplete = () => {
+    //     this.countUp();
+    //   };
+    //   gsap.to(this.transStrength_2, gsapOp);
+    // } else {
+    //   gsap.to(this.transStrength_2, this.transConfig[0]);
+    // }
+
+    // if(num === 2) {
+    //   gsap.timeline()
+    //     .to(this.transStrength_2, this.transConfig[3])
+    //     .to(this.transStrength_2, this.transConfig[2]);
+    // } else {
+    //   gsap.to(this.transStrength_2, this.transConfig[0]);
+    // }
+
+    // Test
+    // tl
+    //   .to(this.transStrength_test, {
+    //     duration: .5 / 2,
+    //     ease: 'power4.inOut',
+    //     value : 1.
+    //   })
+    //   .to(this.transStrength_test, {
+    //     duration: .5 / 2,
+    //     ease: 'power4.inOut',
+    //     value : 0.
+    //   })
+
+    tmpTrConf = num === 3 ? this.transConfig[1] : this.transConfig[0];
     gsap.to(this.transStrength_3, tmpTrConf);
-
-    console.log(this.transStrength_1, this.transStrength_2, this.transStrength_3);
-
-    // gsap.to(this.currentColor, {
-    //   duration: this.duration,
-    //   ease: "power2.inOut",
-    //   value: this.colorPallet.x });
   }
 
   // Transitioning Number Count Up
-  autoPlay(t) {
-    if(Math.floor(t) % this.transCountInterval === 0){
+  autoPlay(time) {
+    // Tansitionとフォーメーションの時間を変える
+    // n秒毎 && 奇数の時実行
+    if(Math.floor(time) % this.transCountInterval === 0){
       if(this.countFlg) {
         if (this.transCountNow >= this.transCountMax) this.transCountNow = 1;
         else this.transCountNow++;
@@ -552,21 +639,6 @@ class App {
       this.countFlg = true;
     }
   }
-
-  // autoplay with GSAP
-  // autoPlay() {
-  //   gsap.
-  //     to({}, {
-  //       duration: this.transCountInterval,
-  //       repeat: -1,
-  //       ease: 'none',
-  //       onRepeat: () => {
-  //         if (this.transCountNow >= this.transCountMax) this.transCountNow = 1;
-  //         else this.transCountNow++;
-  //         this.transStrength(this.transCountNow);
-  //       },
-  //     })
-  // };
 
   /****************************************
   Utilities
