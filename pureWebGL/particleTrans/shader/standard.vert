@@ -15,6 +15,10 @@ attribute vec3 normalC;
 uniform mat4 modelMatrix_1;
 uniform mat4 modelMatrix_2;
 uniform mat4 modelMatrix_3;
+
+uniform mat4 modelMatrix_prev;
+uniform mat4 modelMatrix_next;
+
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 normalMatrix;
@@ -24,7 +28,7 @@ uniform vec4 csColor_1;
 uniform vec4 csColor_2;
 uniform vec4 csColor_3;
 uniform float time;
-uniform float ratio;
+// uniform float ratio;
 
 // Mix Strength
 uniform float transStrength_1;
@@ -84,10 +88,10 @@ void main(){
   // vColor = colorA;
 
   // 座標MIX
-  vec3 interpolated = mix(positionA, positionB, ratio);
+  // vec3 interpolated = mix(positionA, positionB, ratio);
   // Y 座標に応じて波打つような変形処理を行うためにサインの値を算出
-  float s = sin(time + interpolated.y) * .1;
-  vec3 p = interpolated + normalize(interpolated) * s;
+  // float s = sin(time + interpolated.y) * .1;
+  // vec3 p = interpolated + normalize(interpolated) * s;
 
   mat4 mvpMatrix = projectionMatrix * viewMatrix * newModelMat;
 

@@ -2,7 +2,7 @@ import {WebGLUtility}     from './webgl.js';
 import {WebGLMath}        from './math.js';
 import {WebGLGeometry}    from './geometry.js';
 import {WebGLOrbitCamera} from './camera.js';
-import {hslToRgb, rnd}         from './utils.js';
+import {hslToRgb, rnd} from './utils.js';
 
 const m4 = WebGLMath.Mat4;
 const v3 = WebGLMath.Vec3;
@@ -16,7 +16,6 @@ window.addEventListener('DOMContentLoaded', () => {
       app.debugSetting();
       app.setupLocation();
       app.start();
-      app.testFn();
     }
   );
 }, false);
@@ -36,30 +35,24 @@ class App {
     // this.lightVector = new Float32Array([0.0, 0.0, 1.0]);
 
     this.transCountNow = 1;
-    this.transCountMax = 3;
-    this.transCountInterval = 2;
+    this.transCountMax = 2;
+    this.transCountInterval = 3;
+
+    this.modelMatrices = [];
+    this.modelCountOld = 1;
+    this.modelCountNow = 2;
+    this.modelMatCount = 1;
 
     this.transStrength_1 = {value: 1};
     this.transStrength_2 = {value: 0};
-    this.transStrength_3 = {value: 0};
-    this.transStrength_test = {value: 0};
-    this.transDur = 1.5;
+    this.transStrength_3 = {value: 0}; // 不要になる
+
+    this.transDur = this.transCountInterval / 2; //
     this.transConfig = [
       {duration: this.transDur, ease: 'power4.inOut', value : 0},
       {duration: this.transDur, ease: 'power4.inOut', value : 1},
     ]
   }
-
-  // .to(this.transStrength_test, {
-  //   duration: .5 / 2,
-  //   ease: 'power4.inOut',
-  //   value : 1.
-  // })
-  // .to(this.transStrength_test, {
-  //   duration: .5 / 2,
-  //   ease: 'power4.inOut',
-  //   value : 0.
-  // })
 
   init() {
     // Canvas
@@ -153,7 +146,7 @@ class App {
 
     // cubicSphere Geo
     const pSeg = 10;
-    const pSize = 1 / 120;
+    const pSize = 1 / 150;
     this.csGeoA = this.cubicSphere(pSeg, pSeg, pSize, [1, 1, 0, 1]);
     this.csGeoB = this.cubicSphere(pSeg, pSeg, pSize, [1, 0, 1, 1]);
     this.csGeoC = this.cubicSphere(pSeg, pSeg, pSize, [0, 1, 1, 1]);
@@ -190,6 +183,7 @@ class App {
     this.csColors_2 = [];
     this.csColors_3 = [];
     const csTmpScales = [];
+
     for(let i = 0; i < this.pCount; i++) {
       let tmpRgb = hslToRgb((Math.random() * 90) + 315, 80, 50);
       this.csColors_1[i * this.csColorStep + 0] = tmpRgb.r;
@@ -216,7 +210,8 @@ class App {
       const BALL_RADIUS = 1.25;
       this.ballPosStep = 3;
       this.ballColStep = 4;
-      // 極に集中してしまう問題 https://techblog.kayac.com/how-to-distribute-points-randomly-using-high-school-math
+      // 極に集中してしまう問題
+      // https://techblog.kayac.com/how-to-distribute-points-randomly-using-high-school-math
       this.ballTempPos = [];
       this.ballTempCol = [];
 
@@ -236,18 +231,9 @@ class App {
         this.ballTempCol.push(1, 0, 1, 1);
       }
 
-      // Geo座標はfloat32Array（draw pointは多分配列可）
+      // Geo座標はfloat32Array（draw pointは多分普通の配列可）
       this.ballPositions = new Float32Array(this.ballTempPos);
       this.ballColors = new Float32Array(this.ballTempCol);
-
-      // this.ballColorStep = 3;
-      // this.ballColors = new Float32Array(this.ballNum * this.ballColorStep);
-      // for(let i = 0; i < this.ballNum *this.ballColorStep; i += 1) {
-      //   const tmpRgb = hslToRgb((rnd() * 135) + 75, 60, 80);
-      //   this.ballColors[i * this.ballColorStep + 0] = tmpRgb.r;
-      //   this.ballColors[i * this.ballColorStep + 1] = tmpRgb.g;
-      //   this.ballColors[i * this.ballColorStep + 2] = tmpRgb.b;
-      // }
     }
 
     // Cube Position & Color
@@ -302,11 +288,11 @@ class App {
       this.rollTempScl = [];
 
       for (let i = 0; i < this.pCount; i += 1) {
-        const zRot = rnd() * TWO_PI;;
-        const zPos = (i * Z_RISE) - ((Z_RISE * this.pCount) / 2);
-        const tmpRnd = rnd(12);
-        this.rollTempPos.push(0, WIND_RADIUS, zPos);
-        this.rollTempRot.push(zRot);
+        const xRot = rnd() * TWO_PI;;
+        const xPos = (i * Z_RISE) - ((Z_RISE * this.pCount) / 2);
+        const tmpRnd = rnd(15);
+        this.rollTempPos.push(xPos, WIND_RADIUS, 0);
+        this.rollTempRot.push(xRot);
         this.rollTempCol.push(rnd(), rnd(), rnd(), 1);
         this.rollTempScl.push(tmpRnd, tmpRnd, tmpRnd);
       }
@@ -436,24 +422,7 @@ class App {
     this.autoPlay();
   }
 
-  testFn() {
-    return;
-    const tl = gsap.timeline();
-    tl
-      .to(this.transStrength_test, {
-        duration: .5 / 2,
-        ease: 'power4.inOut',
-        value : 1.
-      })
-      .to(this.transStrength_test, {
-        duration: .5 / 2,
-        ease: 'power4.inOut',
-        value : 0.
-      })
-  }
-
   render() {
-    // console.log(this.transStrength_test.value);
 
     // Initial Settings
     const gl = this.gl;
@@ -461,75 +430,78 @@ class App {
     this.currentTime = (Date.now() - this.startTime) / 1000; // Time
     const timeScale = 0.2;
 
-    this.autoPlay(this.currentTime); // Transition番号++
+    // Transition Index Increment
+    this.autoPlay(this.currentTime);
 
-    // Cam
+    // View (Cam)
     const v = this.camera.update();
     const fovy   = 45;
     const aspect = window.innerWidth / window.innerHeight;
     const near   = 0.1
     const far    = 20.0;
-    const p = m4.perspective(fovy, aspect, near, far);
-    // const vp = m4.multiply(p, v);
 
-    // Production
+    // Projection
+    const p = m4.perspective(fovy, aspect, near, far);
+
+    // Standard Rendering
     {
       this.setupStandardRendering();
 
       // Attributes
       WebGLUtility.enableBuffer(gl, this.csGeoVBO, this.standardAttrLocation, this.standardAttrStride, this.csGeoIBO);
 
-      let m_1, m_2, m_3;
+      // Model Switching
+      let m;
       for(let i = 0; i < this.pCount; i++) {
-
-        // Spherical Formation
-        m_1 = m4.identity();
-        m_1 = m4.rotate(m_1, this.currentTime * timeScale, v3.create(1, 1, 0));
-        m_1 = m4.translate(m_1, v3.create(
-          this.ballPositions[i * this.ballPosStep + 0],
-          this.ballPositions[i * this.ballPosStep + 1],
-          this.ballPositions[i * this.ballPosStep + 2],
-        ));
+        this.modelMatrices = [];
 
         // Rolling Formation
-        m_2 = m4.identity();
-        m_2 = m4.rotate(m_2, this.currentTime, v3.create(0, 0, 1));
-        m_2 = m4.rotate(m_2, this.rollRotations[i], v3.create(0, 0, 1));
-        m_2 = m4.translate(m_2, v3.create(
+        m = m4.identity();
+        m = m4.rotate(m, this.currentTime, v3.create(1, 0, 0));
+        m = m4.rotate(m, this.rollRotations[i], v3.create(1, 0, 0));
+        m = m4.translate(m, v3.create(
           this.rollPositions[i * this.rollPosStep + 0],
           this.rollPositions[i * this.rollPosStep + 1],
           this.rollPositions[i * this.rollPosStep + 2],
         ));
-        m_2 = m4.scale(m_2, v3.create(
+        m = m4.scale(m, v3.create(
           this.rollScales[i * this.rollSclStep + 0],
           this.rollScales[i * this.rollSclStep + 1],
           this.rollScales[i * this.rollSclStep + 2],
         ));
+        this.modelMatrices.push(m);
+
+        // Spherical Formation
+        m = m4.identity();
+        m = m4.rotate(m, this.currentTime * timeScale, v3.create(1, 1, 0));
+        m = m4.translate(m, v3.create(
+          this.ballPositions[i * this.ballPosStep + 0],
+          this.ballPositions[i * this.ballPosStep + 1],
+          this.ballPositions[i * this.ballPosStep + 2],
+        ));
+        this.modelMatrices.push(m);
 
         // Cubic Formation
-        m_3 = m4.identity();
-        m_3 = m4.rotate(m_3, this.currentTime * timeScale, v3.create(1, 0, 1));
-        m_3 = m4.translate(m_3, v3.create(
+        m = m4.identity();
+        m = m4.rotate(m, this.currentTime * timeScale, v3.create(1, 0, 1));
+        m = m4.translate(m, v3.create(
           this.cubePositions[i * this.cubePosStep + 0],
           this.cubePositions[i * this.cubePosStep + 1],
           this.cubePositions[i * this.cubePosStep + 2],
         ));
+        this.modelMatrices.push(m);
 
-        // MVP Matrix
-        // const mvp = m4.multiply(vp, m_1);
-
-        // Normal 複数ある場合切り替え？
-        const normalMatrix = m4.transpose(m4.inverse(m_1));
+        // Normal 複数ある場合？
+        const normalMatrix = m4.transpose(m4.inverse(this.modelMatrices[1])); // Sphere Normal
 
         /****************************************
         Uniform Transfer
         */
 
         // Model
-        // gl.uniformMatrix4fv(this.standardUniLocation.mvpMatrix, false, mvp);
-        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_1, false, m_1);
-        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_2, false, m_2);
-        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_3, false, m_3);
+        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_1, false, this.modelMatrices[this.modelCountOld]);
+        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_2, false, this.modelMatrices[this.modelCountNow]);
+        gl.uniformMatrix4fv(this.standardUniLocation.modelMatrix_3, false, this.modelMatrices[2]);
         // View & Proj.
         gl.uniformMatrix4fv(this.standardUniLocation.viewMatrix, false, v);
         gl.uniformMatrix4fv(this.standardUniLocation.projectionMatrix, false, p);
@@ -555,8 +527,8 @@ class App {
           1.0
         ]);
         // Time
-        gl.uniform1f(this.standardUniLocation.time, this.currentTime); // 1fに第2引数不要
-        gl.uniform1f(this.standardUniLocation.ratio, this.localPositionRatio); // テスト用 tweakPane, vert ratio削除
+        gl.uniform1f(this.standardUniLocation.time, this.currentTime); // no need 2nd argument for 1f
+        // gl.uniform1f(this.standardUniLocation.ratio, this.localPositionRatio); // テスト用 tweakPane, vert ratio削除
         // Mix Strength
         gl.uniform1f(
           this.standardUniLocation.transStrength_1,
@@ -578,65 +550,66 @@ class App {
     }
   }
 
-  // 'num' matches model matrix index (ex. modelMatrix_1)
-  transStrength(num) {
-    let tmpTrConf;
+  transStrengthControl() {
+    // Mix Value (No relation with geo index)
 
-    tmpTrConf = num === 1 ? this.transConfig[1] : this.transConfig[0];
+    let tmpTrConf = this.transCountNow === 1 ? this.transConfig[1] : this.transConfig[0];
     gsap.to(this.transStrength_1, tmpTrConf);
 
-    tmpTrConf = num === 2 ? this.transConfig[1] : this.transConfig[0];
+    tmpTrConf = this.transCountNow === 2 ? this.transConfig[1] : this.transConfig[0];
     gsap.to(this.transStrength_2, tmpTrConf);
 
-    // if(num === 2) {
-    //   let gsapOp = {...this.transConfig[1]};
-    //   // gsapOp.duration = gsapOp.duration / 2;
-    //   gsapOp.onComplete = () => {
-    //     this.countUp();
-    //   };
-    //   gsap.to(this.transStrength_2, gsapOp);
-    // } else {
-    //   gsap.to(this.transStrength_2, this.transConfig[0]);
-    // }
-
-    // if(num === 2) {
-    //   gsap.timeline()
-    //     .to(this.transStrength_2, this.transConfig[3])
-    //     .to(this.transStrength_2, this.transConfig[2]);
-    // } else {
-    //   gsap.to(this.transStrength_2, this.transConfig[0]);
-    // }
-
-    // Test
-    // tl
-    //   .to(this.transStrength_test, {
-    //     duration: .5 / 2,
-    //     ease: 'power4.inOut',
-    //     value : 1.
-    //   })
-    //   .to(this.transStrength_test, {
-    //     duration: .5 / 2,
-    //     ease: 'power4.inOut',
-    //     value : 0.
-    //   })
-
-    tmpTrConf = num === 3 ? this.transConfig[1] : this.transConfig[0];
+    //　ここが不要になる
+    tmpTrConf = this.transCountNow === 3 ? this.transConfig[1] : this.transConfig[0];
     gsap.to(this.transStrength_3, tmpTrConf);
   }
 
   // Transitioning Number Count Up
   autoPlay(time) {
-    // Tansitionとフォーメーションの時間を変える
-    // n秒毎 && 奇数の時実行
-    if(Math.floor(time) % this.transCountInterval === 0){
+    // Every Second
+    if (Math.floor(time) % this.transCountInterval === 0){
       if(this.countFlg) {
-        if (this.transCountNow >= this.transCountMax) this.transCountNow = 1;
-        else this.transCountNow++;
-        this.transStrength(this.transCountNow);
+        // Transition
+        this.transSwitch();
+        this.modelControl(time);
+        this.transStrengthControl();
         this.countFlg = !this.countFlg;
       }
     } else {
       this.countFlg = true;
+    }
+  }
+
+  // 0 Transition
+  // 1 Cube
+  // 2 Sphere
+  modelControl(time) {
+    const max = this.modelMatrices.length - 1;
+
+    this.modelMatCount >= max
+      ? this.modelMatCount = 1
+      : this.modelMatCount++;
+
+    // トランジションの種類・数に関係なく交互に動作
+    if (Math.floor(time) % 2 === 0){
+      this.modelCountOld = 0;
+      this.modelCountNow = this.modelMatCount;
+      if(this.modelMatCount >= max) {
+        this.modelMatCount = 1;
+      } else {
+        this.modelMatCount++;
+      }
+    } else {
+      this.modelCountOld = 0;
+    }
+  }
+
+  transSwitch() {
+    // 一旦2通りのトランジション
+    if (this.transCountNow >= this.transCountMax) {
+      this.transCountNow = 1;
+    } else {
+      this.transCountNow++;
     }
   }
 
