@@ -150,10 +150,10 @@ class App {
     this.gl.clear(this.gl.COLOR_BUFFER_BIT); // BG Clear with ClearColor
 
     // Shader Program Select
-    this.gl.useProgram(this.program); // Shader Program Select
+    this.gl.useProgram(this.program);
   
     // Shader Attr & Uniform Transfer
-    this.setAttribute(this.vbo, this.attLocation, this.attStride); // All Attributes
+    this.setAttribute(this.vbo, this.attLocation, this.attStride);
     this.setUniform([
       [1.0, 1.0, 1.0, 1.0], // globalColor
       [this.currentMousePosX, this.currentMousePosY], // mouse
@@ -181,7 +181,7 @@ class App {
   }
   // Shader Compilation
   createShader(source, type) {
-    const shader = this.gl.createShader(type); // Type Verification (Vertex or Fragment)
+    const shader = this.gl.createShader(type); // Strict to it's Type (Vertex or Fragment)
     this.gl.shaderSource(shader, source);
     this.gl.compileShader(shader);
     if (this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
