@@ -1,1 +1,0 @@
-import{u as r}from"./User.6d5d96d0.js";import{a as i,e as u,o as a,u as t,b as s}from"./entry.d6f568ef.js";const _=s("h1",null,"Login",-1),l=s("button",null,"submit",-1),m=[_,l],b={__name:"login",setup(c){const o=r();return(p,e)=>(a(),i("form",{onSubmit:e[0]||(e[0]=u((...n)=>t(o).login&&t(o).login(...n),["prevent"]))},m,32))}};export{b as default};
