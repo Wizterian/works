@@ -1,1 +1,0 @@
-import{D as t,B as r,a as o,I as u,u as n,o as m}from"./entry.d4287a51.js";const _={__name:"[userId]",setup(c){const e=t(),s=r(()=>`Team: ${e.params.teamSlug}  User ID: ${e.params.userId}`);return(a,p)=>(m(),o("div",null,u(n(s)),1))}};export{_ as default};
