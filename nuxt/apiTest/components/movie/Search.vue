@@ -10,7 +10,7 @@
 
 <template>
   <form @submit.prevent="search">
-    <p>Movie Database APIテスト 映画名を入力してください</p>
+    <p>Movie Database APIテスト 映画名（英語）を入力してください</p>
     <input type="text" v-model="query">
     <button>Search</button>
   </form>
